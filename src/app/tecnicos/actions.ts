@@ -17,7 +17,8 @@ export async function crearTecnico(formData: FormData) {
 }
 
 export async function eliminarTecnico(formData: FormData) {
-  const id = String(formData.get("id"));
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
   // Baja lógica: las visitas históricas siguen referenciando al técnico
   const { error } = await supabaseAdmin()
     .from("tecnicos")

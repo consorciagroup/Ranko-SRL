@@ -1,11 +1,10 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { sendList, sendText } from "@/lib/whatsapp";
-import type { Direccion, TipoTrabajo, Visita } from "@/lib/types";
+import type { VisitaConRelaciones } from "@/lib/types";
 
-export type VisitaConRelaciones = Visita & {
-  direcciones: Direccion;
-  tipos_trabajo: TipoTrabajo;
-};
+// Tipo canónico definido en @/lib/types; se re-exporta acá para no romper los
+// imports existentes del bot (`from "./menu"`).
+export type { VisitaConRelaciones };
 
 export function hoyISO(): string {
   // Fecha operativa en hora de Buenos Aires, no UTC (a la noche difieren)

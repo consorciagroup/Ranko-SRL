@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
+import Image from "next/image";
+import { SidebarNav } from "@/components/SidebarNav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,14 +19,6 @@ export const metadata: Metadata = {
   description: "Sistema de reportes de inspección y mantenimiento — Ranko SRL",
 };
 
-const NAV = [
-  { href: "/", label: "Dashboard" },
-  { href: "/rutas", label: "Rutas" },
-  { href: "/catalogo", label: "Tipos de trabajo" },
-  { href: "/direcciones", label: "Direcciones" },
-  { href: "/tecnicos", label: "Técnicos" },
-];
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,22 +31,22 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-neutral-50 text-neutral-900">
         <div className="flex min-h-screen">
-          <aside className="w-56 shrink-0 border-r border-neutral-200 bg-white">
-            <div className="px-5 py-6">
-              <div className="text-lg font-bold tracking-tight">Ranko</div>
-              <div className="text-xs text-neutral-500">Panel de logística</div>
+          <aside className="w-56 shrink-0 bg-ranko-ink text-white">
+            <div className="border-b border-white/10 px-4 py-5">
+              <div className="rounded-md bg-white px-3 py-2">
+                <Image
+                  src="/logo-ranko.png"
+                  alt="Ranko SRL — Ingeniería contra incendios"
+                  width={220}
+                  height={57}
+                  priority
+                />
+              </div>
+              <div className="mt-2 px-1 text-xs text-neutral-300">
+                Panel de logística
+              </div>
             </div>
-            <nav className="flex flex-col gap-1 px-3">
-              {NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-md px-3 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
+            <SidebarNav />
           </aside>
           <main className="flex-1 px-8 py-8">{children}</main>
         </div>

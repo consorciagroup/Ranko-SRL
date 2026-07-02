@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { SubmitButton } from "@/components/ui/SubmitButton";
+import { DeleteButton } from "@/components/ui/DeleteButton";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { TipoTrabajo } from "@/lib/types";
 import { crearTipoTrabajo, eliminarTipoTrabajo } from "./actions";
 
@@ -19,12 +23,11 @@ export default async function CatalogoPage() {
   }
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="text-2xl font-bold">Tipos de trabajo</h1>
-      <p className="mt-1 text-sm text-neutral-500">
+    <div className="max-w-4xl">
+      <PageHeader title="Tipos de trabajo">
         Cada tipo de trabajo tiene su propio checklist. Entrá a uno para editar los
         ítems que el técnico completa en campo.
-      </p>
+      </PageHeader>
 
       <form
         action={crearTipoTrabajo}
@@ -39,12 +42,7 @@ export default async function CatalogoPage() {
             placeholder="Recarga de matafuegos"
           />
         </label>
-        <button
-          type="submit"
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
-        >
-          Crear tipo de trabajo
-        </button>
+        <SubmitButton pendingText="Creando…">Crear tipo de trabajo</SubmitButton>
       </form>
 
       <div className="mt-6 grid gap-3">
@@ -67,23 +65,19 @@ export default async function CatalogoPage() {
             <div className="flex items-center gap-4">
               <Link
                 href={`/catalogo/${t.id}`}
-                className="text-sm text-blue-700 hover:underline"
+                className="text-sm text-ranko-dark hover:underline"
               >
                 Editar checklist
               </Link>
               <form action={eliminarTipoTrabajo}>
                 <input type="hidden" name="id" value={t.id} />
-                <button className="text-xs text-red-600 hover:underline">
-                  Dar de baja
-                </button>
+                <DeleteButton />
               </form>
             </div>
           </div>
         ))}
         {tipos.length === 0 && (
-          <div className="rounded-lg border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-400">
-            Sin tipos de trabajo todavía. Creá el primero arriba.
-          </div>
+          <EmptyState>Sin tipos de trabajo todavía. Creá el primero arriba.</EmptyState>
         )}
       </div>
     </div>

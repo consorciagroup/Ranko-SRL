@@ -1,4 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { SubmitButton } from "@/components/ui/SubmitButton";
+import { DeleteButton } from "@/components/ui/DeleteButton";
 import type { Direccion } from "@/lib/types";
 import { crearDireccion, eliminarDireccion } from "./actions";
 
@@ -14,11 +17,10 @@ export default async function DireccionesPage() {
   const direcciones = (data ?? []) as Direccion[];
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="text-2xl font-bold">Direcciones</h1>
-      <p className="mt-1 text-sm text-neutral-500">
+    <div className="max-w-4xl">
+      <PageHeader title="Direcciones">
         Clientes y ubicaciones donde se hacen las visitas.
-      </p>
+      </PageHeader>
 
       <form
         action={crearDireccion}
@@ -50,12 +52,7 @@ export default async function DireccionesPage() {
             placeholder="Encargado, accesos, etc."
           />
         </label>
-        <button
-          type="submit"
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
-        >
-          Agregar dirección
-        </button>
+        <SubmitButton pendingText="Agregando…">Agregar dirección</SubmitButton>
       </form>
 
       <table className="mt-6 w-full rounded-lg border border-neutral-200 bg-white text-sm">
@@ -64,28 +61,29 @@ export default async function DireccionesPage() {
             <th className="px-4 py-3 font-medium">Dirección</th>
             <th className="px-4 py-3 font-medium">Cliente</th>
             <th className="px-4 py-3 font-medium">Notas</th>
-            <th className="px-4 py-3" />
+            <th className="w-24 px-4 py-3" />
           </tr>
         </thead>
         <tbody>
           {direcciones.map((d) => (
-            <tr key={d.id} className="border-b border-neutral-100 last:border-0">
+            <tr
+              key={d.id}
+              className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
+            >
               <td className="px-4 py-3">{d.direccion}</td>
               <td className="px-4 py-3">{d.cliente}</td>
               <td className="px-4 py-3 text-neutral-500">{d.notas}</td>
               <td className="px-4 py-3 text-right">
                 <form action={eliminarDireccion}>
                   <input type="hidden" name="id" value={d.id} />
-                  <button className="text-xs text-red-600 hover:underline">
-                    Dar de baja
-                  </button>
+                  <DeleteButton />
                 </form>
               </td>
             </tr>
           ))}
           {direcciones.length === 0 && (
             <tr>
-              <td colSpan={4} className="px-4 py-6 text-center text-neutral-400">
+              <td colSpan={4} className="px-4 py-6 text-center text-neutral-500">
                 Sin direcciones cargadas todavía.
               </td>
             </tr>

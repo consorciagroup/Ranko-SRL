@@ -65,7 +65,8 @@ export async function agregarParada(formData: FormData) {
 }
 
 export async function eliminarVisita(formData: FormData) {
-  const id = String(formData.get("id"));
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
   // Solo se pueden sacar visitas que el técnico no arrancó
   const { error } = await supabaseAdmin()
     .from("visitas")
@@ -77,8 +78,9 @@ export async function eliminarVisita(formData: FormData) {
 }
 
 export async function enviarRuta(formData: FormData) {
-  const tecnicoId = String(formData.get("tecnico_id"));
-  const fecha = String(formData.get("fecha"));
+  const tecnicoId = String(formData.get("tecnico_id") ?? "");
+  const fecha = String(formData.get("fecha") || hoyISO());
+  if (!tecnicoId) return;
 
   const db = supabaseAdmin();
   const { data: tecnico, error } = await db

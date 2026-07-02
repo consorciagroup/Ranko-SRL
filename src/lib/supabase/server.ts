@@ -1,7 +1,9 @@
+import "server-only";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 // Cliente con service role: solo para server actions y route handlers.
-// Bypasea RLS — nunca importar desde componentes cliente.
+// Bypasea RLS — nunca importar desde componentes cliente. El import
+// "server-only" hace que el build falle si este módulo se cuela en el cliente.
 let client: SupabaseClient | null = null;
 
 export function supabaseAdmin(): SupabaseClient {

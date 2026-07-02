@@ -66,6 +66,13 @@ export interface Visita {
   updated_at: string;
 }
 
+// Visita con sus relaciones embebidas (join de Supabase). Es la forma en que
+// llega una fila de `visitas` cuando se selecciona con `direcciones(*), tipos_trabajo(*)`.
+export type VisitaConRelaciones = Visita & {
+  direcciones: Direccion;
+  tipos_trabajo: TipoTrabajo;
+};
+
 export interface VisitaItem {
   id: string;
   visita_id: string;

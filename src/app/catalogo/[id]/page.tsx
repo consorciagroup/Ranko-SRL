@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { SubmitButton } from "@/components/ui/SubmitButton";
+import { DeleteButton } from "@/components/ui/DeleteButton";
+import { EmptyState } from "@/components/ui/EmptyState";
 import type { ChecklistItem, TipoTrabajo } from "@/lib/types";
 import { TIPO_DATO_LABEL } from "@/lib/types";
 import { agregarItem, eliminarItem, moverItem } from "../actions";
@@ -23,11 +26,13 @@ export default async function ChecklistBuilderPage({
   const items = (itemsData ?? []) as ChecklistItem[];
 
   return (
-    <div className="max-w-3xl">
-      <Link href="/catalogo" className="text-sm text-blue-700 hover:underline">
+    <div className="max-w-4xl">
+      <Link href="/catalogo" className="text-sm text-ranko-dark hover:underline">
         ← Tipos de trabajo
       </Link>
-      <h1 className="mt-2 text-2xl font-bold">{tipo.nombre}</h1>
+      <h1 className="mt-2 text-2xl font-bold tracking-tight text-neutral-900">
+        {tipo.nombre}
+      </h1>
       <p className="mt-1 text-sm text-neutral-500">
         Checklist que el técnico completa ítem por ítem en WhatsApp, en este orden.
         Los cambios no afectan visitas ya asignadas.
@@ -74,16 +79,12 @@ export default async function ChecklistBuilderPage({
             <form action={eliminarItem}>
               <input type="hidden" name="id" value={item.id} />
               <input type="hidden" name="tipo_trabajo_id" value={tipo.id} />
-              <button className="text-xs text-red-600 hover:underline">
-                Eliminar
-              </button>
+              <DeleteButton>Eliminar</DeleteButton>
             </form>
           </div>
         ))}
         {items.length === 0 && (
-          <div className="rounded-lg border border-dashed border-neutral-300 p-6 text-center text-sm text-neutral-400">
-            Checklist vacío. Agregá el primer ítem abajo.
-          </div>
+          <EmptyState>Checklist vacío. Agregá el primer ítem abajo.</EmptyState>
         )}
       </div>
 
@@ -117,12 +118,7 @@ export default async function ChecklistBuilderPage({
           <input type="checkbox" name="obligatorio" defaultChecked />
           Obligatorio
         </label>
-        <button
-          type="submit"
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
-        >
-          Agregar ítem
-        </button>
+        <SubmitButton pendingText="Agregando…">Agregar ítem</SubmitButton>
       </form>
     </div>
   );

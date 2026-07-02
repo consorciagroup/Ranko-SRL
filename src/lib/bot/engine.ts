@@ -10,6 +10,8 @@ import type { VisitaConRelaciones } from "./menu";
 // (ver engine.test.ts) y el webhook la usa con las reales (deps.ts).
 
 export interface MensajeEntrante {
+  // id del mensaje de Meta (wamid). Se usa para deduplicar en el webhook.
+  id?: string;
   telefono: string;
   texto?: string;
   // id del botón o fila de lista elegida (button_reply / list_reply)

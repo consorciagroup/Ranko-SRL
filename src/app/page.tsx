@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { hoyISO } from "@/lib/bot/menu";
-import type { Tecnico } from "@/lib/types";
+import { PageHeader } from "@/components/ui/PageHeader";
+import type { Tecnico, VisitaConRelaciones } from "@/lib/types";
 import { DashboardLive } from "./DashboardLive";
 
 export const dynamic = "force-dynamic";
@@ -16,22 +17,23 @@ export default async function DashboardPage() {
       .eq("fecha", fecha)
       .order("orden"),
   ]);
+  if (tecnicosRes.error) throw new Error(tecnicosRes.error.message);
+  if (visitasRes.error) throw new Error(visitasRes.error.message);
 
   return (
     <div className="max-w-4xl">
-      <h1 className="text-2xl font-bold">Visitas de hoy</h1>
-      <p className="mt-1 text-sm text-neutral-500">
+      <PageHeader title="Visitas de hoy">
         {new Date(`${fecha}T12:00:00`).toLocaleDateString("es-AR", {
           weekday: "long",
           day: "numeric",
           month: "long",
         })}
-      </p>
-      <div className="mt-4">
+      </PageHeader>
+      <div>
         <DashboardLive
           fecha={fecha}
           tecnicos={(tecnicosRes.data ?? []) as Tecnico[]}
-          visitasIniciales={visitasRes.data ?? []}
+          visitasIniciales={(visitasRes.data ?? []) as VisitaConRelaciones[]}
         />
       </div>
     </div>

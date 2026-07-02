@@ -238,6 +238,17 @@ describe("paso checklist", () => {
     expect(world.ultimo().texto).toContain("(2/2)");
   });
 
+  it('acepta "sí" por texto en un ítem si_no', async () => {
+    world.items = [item("i1", "v1", 1, "si_no"), item("i2", "v1", 2, "texto")];
+    world.estado = { paso: "checklist", visita_id: "v1", item_id: "i1" };
+
+    await procesarMensaje(msg({ texto: "Sí" }), world.deps());
+
+    expect(world.items[0].estado).toBe("completo");
+    expect(world.items[0].valor).toBe("si");
+    expect(world.estado).toEqual({ paso: "checklist", visita_id: "v1", item_id: "i2" });
+  });
+
   it("responder No deja el ítem con observación y marca la visita", async () => {
     world.items = [item("i1", "v1", 1, "si_no"), item("i2", "v1", 2, "texto")];
     world.estado = { paso: "checklist", visita_id: "v1", item_id: "i1" };

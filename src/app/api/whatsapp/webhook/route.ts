@@ -8,6 +8,14 @@ import { realDeps } from "@/lib/bot/deps";
 // GET: verificación inicial al configurar el webhook en el panel de Meta.
 // POST: mensajes entrantes de los técnicos.
 
+// Runtime Node.js (default explícito): usamos node:crypto para validar la firma
+// HMAC y hacemos I/O a Supabase + Graph API. El runtime edge no aplica acá.
+export const runtime = "nodejs";
+// Meta reintenta ante cualquier respuesta no-2xx. El POST puede encadenar varias
+// llamadas (Supabase + envíos a la Graph API por cada mensaje del batch), así que
+// damos margen sobre el default de Vercel para no cortar a mitad de procesamiento.
+export const maxDuration = 30;
+
 export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
   if (
@@ -34,7 +42,14 @@ export async function POST(req: NextRequest) {
   }
 
   const deps = realDeps();
+  // Dedupe por message id dentro del batch: Meta puede reenviar el mismo payload
+  // (reintentos ante timeout) o incluir el mismo mensaje más de una vez.
+  const vistos = new Set<string>();
   for (const mensaje of extraerMensajes(body)) {
+    if (mensaje.id) {
+      if (vistos.has(mensaje.id)) continue;
+      vistos.add(mensaje.id);
+    }
     try {
       await procesarMensaje(mensaje, deps);
     } catch (err) {
@@ -49,8 +64,16 @@ export async function POST(req: NextRequest) {
 
 function firmaValida(raw: string, header: string | null): boolean {
   const secret = process.env.WHATSAPP_APP_SECRET;
-  // Sin secreto configurado (dev local) no validamos firma
-  if (!secret) return true;
+  // Sin secreto configurado (dev local) no validamos firma.
+  // En producción esto es un agujero de seguridad: avisamos por log.
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      console.warn(
+        "WHATSAPP_APP_SECRET no configurado: se está aceptando el webhook sin validar la firma."
+      );
+    }
+    return true;
+  }
   if (!header?.startsWith("sha256=")) return false;
 
   const esperada = crypto.createHmac("sha256", secret).update(raw).digest("hex");
@@ -64,6 +87,7 @@ function firmaValida(raw: string, header: string | null): boolean {
 // ---- Parseo del payload de Meta ----
 
 interface MetaMessage {
+  id: string;
   from: string;
   type: string;
   text?: { body: string };
@@ -90,6 +114,7 @@ function extraerMensajes(body: MetaWebhookBody): MensajeEntrante[] {
       // value.statuses (sent/delivered/read) se ignora: solo procesamos messages
       for (const m of change.value?.messages ?? []) {
         mensajes.push({
+          id: m.id,
           telefono: m.from,
           texto: m.text?.body,
           interactiveId:

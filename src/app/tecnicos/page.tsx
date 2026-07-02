@@ -1,4 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { SubmitButton } from "@/components/ui/SubmitButton";
+import { DeleteButton } from "@/components/ui/DeleteButton";
 import type { Tecnico } from "@/lib/types";
 import { crearTecnico, eliminarTecnico } from "./actions";
 
@@ -14,12 +17,11 @@ export default async function TecnicosPage() {
   const tecnicos = (data ?? []) as Tecnico[];
 
   return (
-    <div className="max-w-3xl">
-      <h1 className="text-2xl font-bold">Técnicos</h1>
-      <p className="mt-1 text-sm text-neutral-500">
+    <div className="max-w-4xl">
+      <PageHeader title="Técnicos">
         El teléfono tiene que ser el número de WhatsApp del técnico, con código de
         país y sin espacios (ej: 5491122334455).
-      </p>
+      </PageHeader>
 
       <form
         action={crearTecnico}
@@ -43,12 +45,7 @@ export default async function TecnicosPage() {
             placeholder="5491122334455"
           />
         </label>
-        <button
-          type="submit"
-          className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
-        >
-          Agregar técnico
-        </button>
+        <SubmitButton pendingText="Agregando…">Agregar técnico</SubmitButton>
       </form>
 
       <table className="mt-6 w-full rounded-lg border border-neutral-200 bg-white text-sm">
@@ -56,27 +53,28 @@ export default async function TecnicosPage() {
           <tr className="border-b border-neutral-200 text-left text-neutral-500">
             <th className="px-4 py-3 font-medium">Nombre</th>
             <th className="px-4 py-3 font-medium">Teléfono</th>
-            <th className="px-4 py-3" />
+            <th className="w-24 px-4 py-3" />
           </tr>
         </thead>
         <tbody>
           {tecnicos.map((t) => (
-            <tr key={t.id} className="border-b border-neutral-100 last:border-0">
+            <tr
+              key={t.id}
+              className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
+            >
               <td className="px-4 py-3">{t.nombre}</td>
               <td className="px-4 py-3 font-mono text-xs">{t.telefono}</td>
               <td className="px-4 py-3 text-right">
                 <form action={eliminarTecnico}>
                   <input type="hidden" name="id" value={t.id} />
-                  <button className="text-xs text-red-600 hover:underline">
-                    Dar de baja
-                  </button>
+                  <DeleteButton />
                 </form>
               </td>
             </tr>
           ))}
           {tecnicos.length === 0 && (
             <tr>
-              <td colSpan={3} className="px-4 py-6 text-center text-neutral-400">
+              <td colSpan={3} className="px-4 py-6 text-center text-neutral-500">
                 Sin técnicos cargados todavía.
               </td>
             </tr>

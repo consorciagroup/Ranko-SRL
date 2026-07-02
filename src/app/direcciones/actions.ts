@@ -17,7 +17,8 @@ export async function crearDireccion(formData: FormData) {
 }
 
 export async function eliminarDireccion(formData: FormData) {
-  const id = String(formData.get("id"));
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
   const { error } = await supabaseAdmin()
     .from("direcciones")
     .update({ activo: false })

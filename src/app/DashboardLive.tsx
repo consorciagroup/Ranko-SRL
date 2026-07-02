@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { EstadoBadge } from "@/components/EstadoBadge";
-import type { Direccion, Tecnico, TipoTrabajo, Visita } from "@/lib/types";
-
-type VisitaFila = Visita & { direcciones: Direccion; tipos_trabajo: TipoTrabajo };
+import { EmptyState } from "@/components/ui/EmptyState";
+import type { Tecnico, VisitaConRelaciones } from "@/lib/types";
 
 // Dashboard del día: recibe los datos iniciales del server y se mantiene en vivo
 // suscribiéndose a los cambios de la tabla `visitas` vía Supabase Realtime.
@@ -16,7 +15,7 @@ export function DashboardLive({
 }: {
   fecha: string;
   tecnicos: Tecnico[];
-  visitasIniciales: VisitaFila[];
+  visitasIniciales: VisitaConRelaciones[];
 }) {
   const [visitas, setVisitas] = useState(visitasIniciales);
   const [enVivo, setEnVivo] = useState(false);
@@ -30,7 +29,7 @@ export function DashboardLive({
         .select("*, direcciones(*), tipos_trabajo(*)")
         .eq("fecha", fecha)
         .order("orden");
-      if (data) setVisitas(data as VisitaFila[]);
+      if (data) setVisitas(data as VisitaConRelaciones[]);
     };
 
     const channel = supabase
@@ -49,7 +48,7 @@ export function DashboardLive({
     };
   }, [fecha]);
 
-  const porTecnico = new Map<string, VisitaFila[]>();
+  const porTecnico = new Map<string, VisitaConRelaciones[]>();
   for (const v of visitas) {
     const grupo = porTecnico.get(v.tecnico_id) ?? [];
     grupo.push(v);
@@ -80,7 +79,11 @@ export function DashboardLive({
         <Kpi label="Visitas del día" valor={totales.total} />
         <Kpi label="En curso" valor={totales.enCurso} />
         <Kpi label="Completadas" valor={totales.completadas} />
-        <Kpi label="Sin acceso" valor={totales.sinAcceso} />
+        <Kpi
+          label="Sin acceso"
+          valor={totales.sinAcceso}
+          alerta={totales.sinAcceso > 0}
+        />
       </div>
 
       <div className="mt-6 grid gap-6">
@@ -127,19 +130,33 @@ export function DashboardLive({
             </section>
           ))}
         {visitas.length === 0 && (
-          <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-400">
+          <EmptyState>
             No hay visitas asignadas para hoy. Armá la ruta en la sección Rutas.
-          </div>
+          </EmptyState>
         )}
       </div>
     </div>
   );
 }
 
-function Kpi({ label, valor }: { label: string; valor: number }) {
+function Kpi({
+  label,
+  valor,
+  alerta,
+}: {
+  label: string;
+  valor: number;
+  alerta?: boolean;
+}) {
   return (
-    <div className="rounded-lg border border-neutral-200 bg-white px-4 py-3">
-      <div className="text-2xl font-bold">{valor}</div>
+    <div
+      className={`rounded-lg border bg-white px-4 py-3 ${
+        alerta ? "border-red-300" : "border-neutral-200"
+      }`}
+    >
+      <div className={`text-2xl font-bold ${alerta ? "text-red-600" : ""}`}>
+        {valor}
+      </div>
       <div className="text-xs text-neutral-500">{label}</div>
     </div>
   );

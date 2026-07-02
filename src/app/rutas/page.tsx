@@ -1,12 +1,20 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { hoyISO } from "@/lib/bot/menu";
-import type { Direccion, Tecnico, TipoTrabajo, Visita } from "@/lib/types";
+import type {
+  Direccion,
+  Tecnico,
+  TipoTrabajo,
+  VisitaConRelaciones,
+} from "@/lib/types";
 import { EstadoBadge } from "@/components/EstadoBadge";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Button } from "@/components/ui/Button";
+import { SubmitButton } from "@/components/ui/SubmitButton";
+import { DeleteButton } from "@/components/ui/DeleteButton";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { agregarParada, eliminarVisita, enviarRuta } from "./actions";
 
 export const dynamic = "force-dynamic";
-
-type VisitaFila = Visita & { direcciones: Direccion; tipos_trabajo: TipoTrabajo };
 
 export default async function RutasPage({
   searchParams,
@@ -30,9 +38,9 @@ export default async function RutasPage({
   const tecnicos = (tecnicosRes.data ?? []) as Tecnico[];
   const direcciones = (direccionesRes.data ?? []) as Direccion[];
   const tipos = (tiposRes.data ?? []) as TipoTrabajo[];
-  const visitas = (visitasRes.data ?? []) as VisitaFila[];
+  const visitas = (visitasRes.data ?? []) as VisitaConRelaciones[];
 
-  const porTecnico = new Map<string, VisitaFila[]>();
+  const porTecnico = new Map<string, VisitaConRelaciones[]>();
   for (const v of visitas) {
     const grupo = porTecnico.get(v.tecnico_id) ?? [];
     grupo.push(v);
@@ -41,28 +49,27 @@ export default async function RutasPage({
 
   return (
     <div className="max-w-4xl">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Rutas</h1>
-        <form method="get" className="flex items-center gap-2 text-sm">
-          <label htmlFor="fecha" className="text-neutral-500">
-            Día
-          </label>
-          <input
-            id="fecha"
-            type="date"
-            name="fecha"
-            defaultValue={fecha}
-            className="rounded-md border border-neutral-300 px-3 py-2"
-          />
-          <button className="rounded-md border border-neutral-300 px-3 py-2 hover:bg-neutral-100">
-            Ver
-          </button>
-        </form>
-      </div>
-      <p className="mt-1 text-sm text-neutral-500">
-        Cada tipo de trabajo en una dirección genera una visita independiente con su
-        propio checklist. La ruta se puede armar el día anterior o el mismo día.
-      </p>
+      <PageHeader
+        title="Rutas"
+        actions={
+          <form method="get" className="flex items-end gap-2 text-sm">
+            <label htmlFor="fecha" className="flex flex-col gap-1">
+              <span className="text-neutral-500">Día</span>
+              <input
+                id="fecha"
+                type="date"
+                name="fecha"
+                defaultValue={fecha}
+                className="rounded-md border border-neutral-300 px-3 py-2"
+              />
+            </label>
+            <Button variant="secondary">Ver</Button>
+          </form>
+        }
+      >
+        Cada tipo de trabajo en una dirección genera una visita independiente con
+        su propio checklist. La ruta se puede armar el día anterior o el mismo día.
+      </PageHeader>
 
       {/* Agregar parada */}
       <form
@@ -110,12 +117,7 @@ export default async function RutasPage({
               ))}
             </div>
           </fieldset>
-          <button
-            type="submit"
-            className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
-          >
-            Agregar parada
-          </button>
+          <SubmitButton pendingText="Agregando…">Agregar parada</SubmitButton>
         </div>
       </form>
 
@@ -141,9 +143,9 @@ export default async function RutasPage({
                   <form action={enviarRuta}>
                     <input type="hidden" name="tecnico_id" value={t.id} />
                     <input type="hidden" name="fecha" value={fecha} />
-                    <button className="rounded-md bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-600">
+                    <SubmitButton variant="success" pendingText="Enviando…">
                       Enviar ruta por WhatsApp
-                    </button>
+                    </SubmitButton>
                   </form>
                 </header>
                 <ul>
@@ -168,9 +170,7 @@ export default async function RutasPage({
                         {v.estado === "asignada" && (
                           <form action={eliminarVisita}>
                             <input type="hidden" name="id" value={v.id} />
-                            <button className="text-xs text-red-600 hover:underline">
-                              Quitar
-                            </button>
+                            <DeleteButton>Quitar</DeleteButton>
                           </form>
                         )}
                       </div>
@@ -181,9 +181,9 @@ export default async function RutasPage({
             );
           })}
         {visitas.length === 0 && (
-          <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-400">
+          <EmptyState>
             Sin visitas para el {fecha}. Agregá la primera parada arriba.
-          </div>
+          </EmptyState>
         )}
       </div>
     </div>
