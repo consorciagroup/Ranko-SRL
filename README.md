@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ranko — Sistema de reportes
 
-## Getting Started
+Sistema de reportes de inspección/mantenimiento para Ranko SRL (ingeniería contra
+incendios). Dos interfaces:
 
-First, run the development server:
+- **Panel de logística** (web): armado de rutas diarias, catálogo de tipos de
+  trabajo con constructor de checklists, dashboard del día en tiempo real.
+- **Bot de WhatsApp** (Meta Cloud API oficial): el técnico recibe sus paradas en
+  un menú, elige el orden libremente y completa cada checklist guiado ítem por
+  ítem (sí/no, texto, foto, medición), con evidencia en Supabase Storage.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Contexto completo del negocio: [docs/brief-ranko-sistema-reportes.md](docs/brief-ranko-sistema-reportes.md).
+
+## Stack
+
+Next.js (App Router) + Supabase (Postgres, Realtime, Storage) + Meta WhatsApp
+Cloud API. Deploy en Vercel.
+
+```
+WhatsApp ⇄ /api/whatsapp/webhook ⇄ máquina de estados (src/lib/bot) ⇄ Supabase
+                     Panel logística (src/app/*) ⇄ Supabase (+ Realtime en dashboard)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- El bot es una máquina de estados **persistida en DB** (tabla `conversaciones`)
+  porque Vercel es serverless: `src/lib/bot/engine.ts` contiene la lógica pura
+  (testeada en `engine.test.ts`), `src/lib/bot/deps.ts` la conecta a Supabase y
+  WhatsApp.
+- La **visita** (dirección + tipo de trabajo + técnico + día) es la entidad
+  atómica; el checklist se snapshotea en `visita_items` al crearla, así editar el
+  catálogo no rompe visitas en curso.
+- Estados de visita: `asignada → en_curso → completada → en_revision → aprobada`
+  (+ `sin_acceso`, y flag `con_observacion` que no bloquea el flujo).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Correr el proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env.local   # completar credenciales (ver docs/setup-cuentas.md)
+npm install
+npm run dev                  # panel en http://localhost:3000
+npm test                     # tests de la máquina de estados del bot
+```
 
-## Learn More
+Las credenciales de Supabase, Meta/WhatsApp y Vercel se crean en **cuentas nuevas
+a nombre de Ranko** — pasos completos en [docs/setup-cuentas.md](docs/setup-cuentas.md).
 
-To learn more about Next.js, take a look at the following resources:
+## Estructura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+supabase/migrations/   modelo de datos (aplicar con `supabase db push`)
+supabase/seed.sql      datos de ejemplo para la demo
+src/lib/whatsapp.ts    wrapper de la Meta Cloud API
+src/lib/bot/           máquina de estados del bot + menú de paradas
+src/app/               panel de logística (dashboard, rutas, catálogo, ABMs)
+src/app/api/whatsapp/  webhook de mensajes entrantes
+```
