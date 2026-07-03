@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { DeleteButton } from "@/components/ui/DeleteButton";
+import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
 import type { Direccion } from "@/lib/types";
 import { crearDireccion, eliminarDireccion } from "./actions";
 
@@ -17,7 +17,7 @@ export default async function DireccionesPage() {
   const direcciones = (data ?? []) as Direccion[];
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-7xl">
       <PageHeader title="Direcciones">
         Clientes y ubicaciones donde se hacen las visitas.
       </PageHeader>
@@ -74,10 +74,12 @@ export default async function DireccionesPage() {
               <td className="px-4 py-3">{d.cliente}</td>
               <td className="px-4 py-3 text-neutral-500">{d.notas}</td>
               <td className="px-4 py-3 text-right">
-                <form action={eliminarDireccion}>
-                  <input type="hidden" name="id" value={d.id} />
-                  <DeleteButton />
-                </form>
+                <ConfirmDeleteButton
+                  action={eliminarDireccion}
+                  id={d.id}
+                  titulo="Dar de baja dirección"
+                  mensaje={`Se dará de baja "${d.direccion}" (${d.cliente}). Las visitas ya cargadas no se modifican.`}
+                />
               </td>
             </tr>
           ))}

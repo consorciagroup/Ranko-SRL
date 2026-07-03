@@ -2,7 +2,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { DeleteButton } from "@/components/ui/DeleteButton";
+import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import type { TipoTrabajo } from "@/lib/types";
 import { crearTipoTrabajo, eliminarTipoTrabajo } from "./actions";
@@ -23,7 +23,7 @@ export default async function CatalogoPage() {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-7xl">
       <PageHeader title="Tipos de trabajo">
         Cada tipo de trabajo tiene su propio checklist. Entrá a uno para editar los
         ítems que el técnico completa en campo.
@@ -69,10 +69,12 @@ export default async function CatalogoPage() {
               >
                 Editar checklist
               </Link>
-              <form action={eliminarTipoTrabajo}>
-                <input type="hidden" name="id" value={t.id} />
-                <DeleteButton />
-              </form>
+              <ConfirmDeleteButton
+                action={eliminarTipoTrabajo}
+                id={t.id}
+                titulo="Dar de baja tipo de trabajo"
+                mensaje={`Se dará de baja "${t.nombre}". Su checklist dejará de estar disponible para nuevas visitas. Las visitas ya cargadas conservan su checklist.`}
+              />
             </div>
           </div>
         ))}

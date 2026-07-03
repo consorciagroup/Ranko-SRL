@@ -12,8 +12,32 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* Escala base más generosa. Tailwind v4 define tipografía y espaciado en rem,
+   así que subir el font-size raíz agranda proporcionalmente TODO el panel
+   (textos, padding, gaps) desde una sola perilla. 16px → 18px ≈ +12,5%. */
+html {
+  font-size: 18px;
+}
+
 body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Cursor de manito en todo lo clickeable. Tailwind v4 quitó el `cursor: pointer`
+   por defecto de los <button>, así que hay que reponerlo (los <a> ya lo traen).
+   OJO: va en su propia regla, sin mezclar con selectores :has() — Lightning CSS
+   (el motor de Tailwind v4) descarta la regla ENTERA si un selector del grupo no
+   está soportado en los targets, y nos dejaría los botones sin manito. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+/* Los labels de checkbox/radio también son clickeables. Regla aparte por lo de
+   arriba: si :has() no se aplica en algún browser, solo pierden esto los labels. */
+label:has(input[type="checkbox"]),
+label:has(input[type="radio"]) {
+  cursor: pointer;
 }
 
 /* Controles de formulario: acento de marca + foco visible por teclado (WCAG 2.4.7).

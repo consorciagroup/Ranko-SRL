@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { DeleteButton } from "@/components/ui/DeleteButton";
+import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
 import type { Tecnico } from "@/lib/types";
 import { crearTecnico, eliminarTecnico } from "./actions";
 
@@ -17,7 +17,7 @@ export default async function TecnicosPage() {
   const tecnicos = (data ?? []) as Tecnico[];
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-7xl">
       <PageHeader title="Técnicos">
         El teléfono tiene que ser el número de WhatsApp del técnico, con código de
         país y sin espacios (ej: 5491122334455).
@@ -65,10 +65,12 @@ export default async function TecnicosPage() {
               <td className="px-4 py-3">{t.nombre}</td>
               <td className="px-4 py-3 font-mono text-xs">{t.telefono}</td>
               <td className="px-4 py-3 text-right">
-                <form action={eliminarTecnico}>
-                  <input type="hidden" name="id" value={t.id} />
-                  <DeleteButton />
-                </form>
+                <ConfirmDeleteButton
+                  action={eliminarTecnico}
+                  id={t.id}
+                  titulo="Dar de baja técnico"
+                  mensaje={`El técnico "${t.nombre}" dejará de recibir visitas por WhatsApp. Las visitas ya cargadas no se modifican.`}
+                />
               </td>
             </tr>
           ))}

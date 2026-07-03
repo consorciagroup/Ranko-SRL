@@ -26,7 +26,7 @@ export default async function ChecklistBuilderPage({
   const items = (itemsData ?? []) as ChecklistItem[];
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-7xl">
       <Link href="/catalogo" className="text-sm text-ranko-dark hover:underline">
         ← Tipos de trabajo
       </Link>
