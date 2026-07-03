@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   if (visitasRes.error) throw new Error(visitasRes.error.message);
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-7xl">
       <PageHeader title="Visitas de hoy">
         {new Date(`${fecha}T12:00:00`).toLocaleDateString("es-AR", {
           weekday: "long",

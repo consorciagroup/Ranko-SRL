@@ -31,7 +31,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-neutral-50 text-neutral-900">
         <div className="flex min-h-screen">
-          <aside className="w-56 shrink-0 bg-ranko-ink text-white">
+          <aside className="flex w-56 shrink-0 flex-col bg-ranko-ink text-white">
             <div className="border-b border-white/10 px-4 py-5">
               <div className="rounded-md bg-white px-3 py-2">
                 <Image

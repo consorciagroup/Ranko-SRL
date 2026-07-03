@@ -48,7 +48,7 @@ export default async function RutasPage({
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-7xl">
       <PageHeader
         title="Rutas"
         actions={

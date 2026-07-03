@@ -13,6 +13,7 @@ Lista viva — tachar cuando se resuelva. Los primeros 4 vienen del brief (secci
 - [ ] **Método de firma/certificación** — hoy papel. ¿Foto de evidencia alcanza o hace falta firma digital? ¿Alguna normativa (IRAM, ley de bomberos, seguros) exige formato específico?
 - [ ] **Canal de entrega de alertas** — ¿mail, WhatsApp, solo dashboard? ¿A quién: Pehuen, empleados específicos, ambos?
 - [ ] **Visita ad-hoc** (técnico llega a una dirección sin visita asignada) — ¿pasa lo suficiente como para soportarlo en v1?
+- [ ] **Dominio de la herramienta interna** — el panel/reportes es interno (Pehuen + logística), no es el sitio de clientes. Dos opciones: (a) subdominio del dominio actual de Ranko, ej. `panel.ranko.com.ar` — costo $0, técnicamente aislado del sitio de clientes; (b) dominio nuevo dedicado, ej. `rankoapp.com` — ~USD 10-12/año, desacoplado de la marca pública. En cualquier caso registrar a nombre de Ranko. Mientras tanto la demo corre sobre el dominio `.vercel.app`. Definir **antes** de conectar WhatsApp (el webhook de Meta apunta a un dominio fijo; conviene configurarlo una sola vez con el definitivo).
 
 ## Para el arranque en producción
 
