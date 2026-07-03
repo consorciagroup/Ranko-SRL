@@ -2,6 +2,7 @@
 
 Sistema de reportes de inspección/mantenimiento para Ranko SRL (ingeniería contra
 incendios). Dos interfaces:
+---
 
 - **Panel de logística** (web): armado de rutas diarias, catálogo de tipos de
   trabajo con constructor de checklists, dashboard del día en tiempo real.

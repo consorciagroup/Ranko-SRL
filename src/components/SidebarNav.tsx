@@ -13,7 +13,7 @@ const PRINCIPAL = [
 // Configuración (datos maestros): se usan poco. Colapsados detrás de "Configuración",
 // a propósito "menos a mano", para evitar cambios accidentales.
 const CONFIG = [
-  { href: "/catalogo", label: "Tipos de trabajo" },
+  { href: "/catalogo", label: "Trabajos" },
   { href: "/direcciones", label: "Direcciones" },
   { href: "/tecnicos", label: "Técnicos" },
 ];
