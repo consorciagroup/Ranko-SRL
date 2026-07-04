@@ -31,7 +31,16 @@ export function AgregarRutaFields({
 
   return (
     <>
-      <input type="hidden" name="fecha" value={fecha} />
+      <label className="flex flex-col gap-1 text-sm">
+        <span className="font-medium">Fecha</span>
+        <input
+          type="date"
+          name="fecha"
+          required
+          defaultValue={fecha}
+          className="w-full rounded-md border border-neutral-300 px-3 py-2"
+        />
+      </label>
       <label className="flex flex-col gap-1 text-sm">
         <span className="font-medium">Técnico</span>
         <select
