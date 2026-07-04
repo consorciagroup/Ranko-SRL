@@ -98,7 +98,8 @@ export default async function DireccionesPage({
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <table className="w-full rounded-lg border border-neutral-200 bg-white text-sm">
+      <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+      <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-neutral-200 text-left text-neutral-500">
             <th className="px-4 py-3 font-medium">Dirección</th>
@@ -143,6 +144,7 @@ export default async function DireccionesPage({
           )}
         </tbody>
       </table>
+      </div>
       </div>
 
       <DetailPanel

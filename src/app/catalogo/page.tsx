@@ -71,38 +71,39 @@ export default async function CatalogoPage({
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <div className="grid gap-3">
-        {tipos.map((t) => (
-          <div
-            key={t.id}
-            className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-4 py-3"
-          >
-            <div>
-              <Link
-                href={`?trabajo=${t.id}`}
-                scroll={false}
-                className="font-medium hover:underline"
-              >
-                {t.nombre}
-              </Link>
-              <div className="text-xs text-neutral-500">
-                {conteo.get(t.id) ?? 0} ítems en el checklist
+      {tipos.length > 0 ? (
+        <div className="rounded-lg border border-neutral-200 bg-white">
+          {tipos.map((t) => (
+            <div
+              key={t.id}
+              className="flex items-center justify-between border-b border-neutral-100 px-4 py-3 last:border-0"
+            >
+              <div>
+                <Link
+                  href={`?trabajo=${t.id}`}
+                  scroll={false}
+                  className="font-medium hover:underline"
+                >
+                  {t.nombre}
+                </Link>
+                <div className="text-xs text-neutral-500">
+                  {conteo.get(t.id) ?? 0} ítems en el checklist
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <ConfirmDeleteButton
+                  action={eliminarTipoTrabajo}
+                  id={t.id}
+                  titulo="Eliminar tipo de trabajo"
+                  mensaje={`Se eliminará "${t.nombre}". Su checklist dejará de estar disponible para nuevas visitas. Las visitas ya cargadas conservan su checklist.`}
+                />
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <ConfirmDeleteButton
-                action={eliminarTipoTrabajo}
-                id={t.id}
-                titulo="Eliminar tipo de trabajo"
-                mensaje={`Se eliminará "${t.nombre}". Su checklist dejará de estar disponible para nuevas visitas. Las visitas ya cargadas conservan su checklist.`}
-              />
-            </div>
-          </div>
-        ))}
-        {tipos.length === 0 && (
-          <EmptyState>Sin tipos de trabajo todavía. Creá el primero arriba.</EmptyState>
-        )}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState>Sin tipos de trabajo todavía. Creá el primero arriba.</EmptyState>
+      )}
       </div>
 
       <DetailPanel
