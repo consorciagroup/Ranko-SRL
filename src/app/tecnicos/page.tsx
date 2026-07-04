@@ -88,7 +88,7 @@ export default async function TecnicosPage({
           {tecnicos.map((t) => (
             <tr
               key={t.id}
-              className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
+              className="relative border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
             >
               <td className="px-4 py-3">
                 <Link
@@ -96,11 +96,12 @@ export default async function TecnicosPage({
                   scroll={false}
                   className="font-medium hover:underline"
                 >
+                  <span className="absolute inset-0" aria-hidden="true" />
                   {t.nombre}
                 </Link>
               </td>
               <td className="px-4 py-3 font-mono text-xs">{t.telefono}</td>
-              <td className="px-4 py-3 text-right">
+              <td className="relative z-10 px-4 py-3 text-right">
                 <ConfirmDeleteButton
                   action={eliminarTecnico}
                   id={t.id}

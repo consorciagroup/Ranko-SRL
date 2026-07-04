@@ -112,7 +112,7 @@ export default async function DireccionesPage({
           {direcciones.map((d) => (
             <tr
               key={d.id}
-              className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
+              className="relative border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
             >
               <td className="px-4 py-3">
                 <Link
@@ -120,12 +120,13 @@ export default async function DireccionesPage({
                   scroll={false}
                   className="font-medium hover:underline"
                 >
+                  <span className="absolute inset-0" aria-hidden="true" />
                   {d.direccion}
                 </Link>
               </td>
               <td className="px-4 py-3">{d.cliente}</td>
               <td className="px-4 py-3 text-neutral-500">{d.notas}</td>
-              <td className="px-4 py-3 text-right">
+              <td className="relative z-10 px-4 py-3 text-right">
                 <ConfirmDeleteButton
                   action={eliminarDireccion}
                   id={d.id}

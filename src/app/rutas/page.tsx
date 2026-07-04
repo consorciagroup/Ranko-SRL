@@ -150,13 +150,14 @@ export default async function RutasPage({
             key={`${g.tecnico.id}-${g.fecha}`}
             className="rounded-lg border border-neutral-200 bg-white"
           >
-            <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
+            <header className="relative flex items-center justify-between border-b border-neutral-200 px-4 py-3">
               <div>
                 <Link
                   href={hrefTecnico(g.tecnico.id)}
                   scroll={false}
                   className="font-semibold hover:underline"
                 >
+                  <span className="absolute inset-0" aria-hidden="true" />
                   {g.tecnico.nombre}
                 </Link>
                 <span className="ml-2 text-sm text-neutral-500">
@@ -164,7 +165,7 @@ export default async function RutasPage({
                   {g.visitas.length !== 1 && "s"}
                 </span>
               </div>
-              <form action={enviarRuta}>
+              <form action={enviarRuta} className="relative z-10">
                 <input type="hidden" name="tecnico_id" value={g.tecnico.id} />
                 <input type="hidden" name="fecha" value={g.fecha} />
                 <SubmitButton variant="success" pendingText="Enviando…">

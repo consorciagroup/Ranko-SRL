@@ -76,7 +76,7 @@ export default async function CatalogoPage({
           {tipos.map((t) => (
             <div
               key={t.id}
-              className="flex items-center justify-between border-b border-neutral-100 px-4 py-3 last:border-0"
+              className="relative flex items-center justify-between border-b border-neutral-100 px-4 py-3 last:border-0"
             >
               <div>
                 <Link
@@ -84,13 +84,14 @@ export default async function CatalogoPage({
                   scroll={false}
                   className="font-medium hover:underline"
                 >
+                  <span className="absolute inset-0" aria-hidden="true" />
                   {t.nombre}
                 </Link>
                 <div className="text-xs text-neutral-500">
                   {conteo.get(t.id) ?? 0} ítems en el checklist
                 </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="relative z-10 flex items-center gap-4">
                 <ConfirmDeleteButton
                   action={eliminarTipoTrabajo}
                   id={t.id}
