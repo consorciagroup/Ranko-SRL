@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useId, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Button } from "./Button";
+import { Modal } from "./Modal";
 
 // Baja con confirmación mediante un modal propio del panel (no el confirm()
 // nativo del navegador, que muestra el dominio y no se puede estilar).
@@ -15,8 +16,9 @@ export function ConfirmDeleteButton({
   id,
   titulo,
   mensaje,
-  trigger = "Dar de baja",
-  confirmLabel = "Dar de baja",
+  trigger = "Eliminar",
+  confirmLabel = "Eliminar",
+  pendingLabel = "Eliminando…",
 }: {
   action: (formData: FormData) => void | Promise<void>;
   id: string;
@@ -24,23 +26,10 @@ export function ConfirmDeleteButton({
   mensaje: string;
   trigger?: string;
   confirmLabel?: string;
+  pendingLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
-
-  // Cerrar con Escape y bloquear el scroll del fondo mientras está abierto.
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("keydown", onKey);
-    const { overflow } = document.body.style;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = overflow;
-    };
-  }, [open]);
+  const titleId = useId();
 
   return (
     <>
@@ -52,19 +41,8 @@ export function ConfirmDeleteButton({
         {trigger}
       </button>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-          onClick={() => setOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="confirm-delete-title"
-        >
-          <div
-            className="w-full max-w-md rounded-xl bg-white p-6 text-left shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex gap-4">
+      <Modal open={open} onClose={() => setOpen(false)} labelledBy={titleId}>
+        <div className="flex gap-4">
               <div
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600"
                 aria-hidden="true"
@@ -85,7 +63,7 @@ export function ConfirmDeleteButton({
               </div>
               <div>
                 <h2
-                  id="confirm-delete-title"
+                  id={titleId}
                   className="text-xl font-bold text-neutral-900"
                 >
                   {titulo}
@@ -104,23 +82,21 @@ export function ConfirmDeleteButton({
               </Button>
               <form action={action}>
                 <input type="hidden" name="id" value={id} />
-                <ConfirmSubmit label={confirmLabel} />
+                <ConfirmSubmit label={confirmLabel} pendingLabel={pendingLabel} />
               </form>
             </div>
-          </div>
-        </div>
-      )}
+      </Modal>
     </>
   );
 }
 
 // Botón de confirmación: usa useFormStatus para deshabilitarse mientras la
 // server action corre (feedback + evita doble baja).
-function ConfirmSubmit({ label }: { label: string }) {
+function ConfirmSubmit({ label, pendingLabel }: { label: string; pendingLabel: string }) {
   const { pending } = useFormStatus();
   return (
     <Button type="submit" variant="danger" disabled={pending}>
-      {pending ? "Dando de baja…" : label}
+      {pending ? pendingLabel : label}
     </Button>
   );
 }

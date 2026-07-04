@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { CreateModal } from "@/components/ui/CreateModal";
 import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { DetailPanel } from "@/components/ui/DetailPanel";
@@ -43,30 +43,35 @@ export default async function CatalogoPage({
 
   return (
     <div className="max-w-7xl">
-      <PageHeader title="Tipos de trabajo">
+      <PageHeader
+        title="Tipos de trabajo"
+        actions={
+          <CreateModal
+            trigger="Agregar tipo de trabajo"
+            title="Agregar tipo de trabajo"
+            submitLabel="Crear tipo de trabajo"
+            pendingLabel="Creando…"
+            action={crearTipoTrabajo}
+          >
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Nombre</span>
+              <input
+                name="nombre"
+                required
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                placeholder="Recarga de matafuegos"
+              />
+            </label>
+          </CreateModal>
+        }
+      >
         Cada tipo de trabajo tiene su propio checklist. Entrá a uno para editar los
         ítems que el técnico completa en campo.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <form
-        action={crearTipoTrabajo}
-        className="flex flex-wrap items-end gap-3 rounded-lg border border-neutral-200 bg-white p-4"
-      >
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Nombre</span>
-          <input
-            name="nombre"
-            required
-            className="w-72 rounded-md border border-neutral-300 px-3 py-2"
-            placeholder="Recarga de matafuegos"
-          />
-        </label>
-        <SubmitButton pendingText="Creando…">Crear tipo de trabajo</SubmitButton>
-      </form>
-
-      <div className="mt-6 grid gap-3">
+      <div className="grid gap-3">
         {tipos.map((t) => (
           <div
             key={t.id}
@@ -85,17 +90,11 @@ export default async function CatalogoPage({
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <Link
-                href={`/catalogo/${t.id}`}
-                className="text-sm text-ranko-dark hover:underline"
-              >
-                Editar checklist
-              </Link>
               <ConfirmDeleteButton
                 action={eliminarTipoTrabajo}
                 id={t.id}
-                titulo="Dar de baja tipo de trabajo"
-                mensaje={`Se dará de baja "${t.nombre}". Su checklist dejará de estar disponible para nuevas visitas. Las visitas ya cargadas conservan su checklist.`}
+                titulo="Eliminar tipo de trabajo"
+                mensaje={`Se eliminará "${t.nombre}". Su checklist dejará de estar disponible para nuevas visitas. Las visitas ya cargadas conservan su checklist.`}
               />
             </div>
           </div>

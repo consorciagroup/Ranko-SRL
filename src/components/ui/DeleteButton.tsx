@@ -10,7 +10,7 @@ import { useFormStatus } from "react-dom";
 // Para bajas que necesitan confirmación (técnico / dirección / tipo de trabajo)
 // usar `ConfirmDeleteButton`, que abre un modal propio en vez de enviar directo.
 export function DeleteButton({
-  children = "Dar de baja",
+  children = "Eliminar",
   className = "",
 }: {
   children?: React.ReactNode;

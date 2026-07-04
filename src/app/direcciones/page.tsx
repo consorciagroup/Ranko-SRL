@@ -2,7 +2,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { formatHora } from "@/lib/format";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { CreateModal } from "@/components/ui/CreateModal";
 import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
 import { DetailPanel } from "@/components/ui/DetailPanel";
 import { Field } from "@/components/ui/Field";
@@ -54,46 +54,51 @@ export default async function DireccionesPage({
 
   return (
     <div className="max-w-7xl">
-      <PageHeader title="Direcciones">
+      <PageHeader
+        title="Direcciones"
+        actions={
+          <CreateModal
+            trigger="Agregar dirección"
+            title="Agregar dirección"
+            submitLabel="Crear dirección"
+            pendingLabel="Agregando…"
+            action={crearDireccion}
+          >
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Dirección</span>
+              <input
+                name="direccion"
+                required
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                placeholder="Av. Corrientes 1234, CABA"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Cliente</span>
+              <input
+                name="cliente"
+                required
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                placeholder="Consorcio Corrientes 1234"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Notas (opcional)</span>
+              <input
+                name="notas"
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                placeholder="Encargado, accesos, etc."
+              />
+            </label>
+          </CreateModal>
+        }
+      >
         Clientes y ubicaciones donde se hacen las visitas.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <form
-        action={crearDireccion}
-        className="flex flex-wrap items-end gap-3 rounded-lg border border-neutral-200 bg-white p-4"
-      >
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Dirección</span>
-          <input
-            name="direccion"
-            required
-            className="w-64 rounded-md border border-neutral-300 px-3 py-2"
-            placeholder="Av. Corrientes 1234, CABA"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Cliente</span>
-          <input
-            name="cliente"
-            required
-            className="w-56 rounded-md border border-neutral-300 px-3 py-2"
-            placeholder="Consorcio Corrientes 1234"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Notas (opcional)</span>
-          <input
-            name="notas"
-            className="w-56 rounded-md border border-neutral-300 px-3 py-2"
-            placeholder="Encargado, accesos, etc."
-          />
-        </label>
-        <SubmitButton pendingText="Agregando…">Agregar dirección</SubmitButton>
-      </form>
-
-      <table className="mt-6 w-full rounded-lg border border-neutral-200 bg-white text-sm">
+      <table className="w-full rounded-lg border border-neutral-200 bg-white text-sm">
         <thead>
           <tr className="border-b border-neutral-200 text-left text-neutral-500">
             <th className="px-4 py-3 font-medium">Dirección</th>
@@ -123,8 +128,8 @@ export default async function DireccionesPage({
                 <ConfirmDeleteButton
                   action={eliminarDireccion}
                   id={d.id}
-                  titulo="Dar de baja dirección"
-                  mensaje={`Se dará de baja "${d.direccion}" (${d.cliente}). Las visitas ya cargadas no se modifican.`}
+                  titulo="Eliminar dirección"
+                  mensaje={`Se eliminará "${d.direccion}" (${d.cliente}). Las visitas ya cargadas no se modifican.`}
                 />
               </td>
             </tr>

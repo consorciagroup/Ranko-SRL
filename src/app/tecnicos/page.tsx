@@ -2,7 +2,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { hoyISO } from "@/lib/bot/menu";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { CreateModal } from "@/components/ui/CreateModal";
 import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
 import { DetailPanel } from "@/components/ui/DetailPanel";
 import { Field } from "@/components/ui/Field";
@@ -38,39 +38,44 @@ export default async function TecnicosPage({
 
   return (
     <div className="max-w-7xl">
-      <PageHeader title="Técnicos">
+      <PageHeader
+        title="Técnicos"
+        actions={
+          <CreateModal
+            trigger="Agregar técnico"
+            title="Agregar técnico"
+            submitLabel="Crear técnico"
+            pendingLabel="Agregando…"
+            action={crearTecnico}
+          >
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Nombre</span>
+              <input
+                name="nombre"
+                required
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                placeholder="Juan Pérez"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium">Teléfono (WhatsApp)</span>
+              <input
+                name="telefono"
+                required
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                placeholder="5491122334455"
+              />
+            </label>
+          </CreateModal>
+        }
+      >
         El teléfono tiene que ser el número de WhatsApp del técnico, con código de
         país y sin espacios (ej: 5491122334455).
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <form
-        action={crearTecnico}
-        className="flex flex-wrap items-end gap-3 rounded-lg border border-neutral-200 bg-white p-4"
-      >
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Nombre</span>
-          <input
-            name="nombre"
-            required
-            className="w-56 rounded-md border border-neutral-300 px-3 py-2"
-            placeholder="Juan Pérez"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Teléfono (WhatsApp)</span>
-          <input
-            name="telefono"
-            required
-            className="w-56 rounded-md border border-neutral-300 px-3 py-2"
-            placeholder="5491122334455"
-          />
-        </label>
-        <SubmitButton pendingText="Agregando…">Agregar técnico</SubmitButton>
-      </form>
-
-      <table className="mt-6 w-full rounded-lg border border-neutral-200 bg-white text-sm">
+      <table className="w-full rounded-lg border border-neutral-200 bg-white text-sm">
         <thead>
           <tr className="border-b border-neutral-200 text-left text-neutral-500">
             <th className="px-4 py-3 font-medium">Nombre</th>
@@ -98,7 +103,7 @@ export default async function TecnicosPage({
                 <ConfirmDeleteButton
                   action={eliminarTecnico}
                   id={t.id}
-                  titulo="Dar de baja técnico"
+                  titulo="Eliminar técnico"
                   mensaje={`El técnico "${t.nombre}" dejará de recibir visitas por WhatsApp. Las visitas ya cargadas no se modifican.`}
                 />
               </td>

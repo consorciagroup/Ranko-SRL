@@ -6,13 +6,7 @@ import { DashboardLive } from "./DashboardLive";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tecnico?: string; visita?: string }>;
-}) {
-  const { tecnico: tecnicoSeleccionadoId, visita: visitaSeleccionadaId } =
-    await searchParams;
+export default async function DashboardPage() {
   const fecha = hoyISO();
   const db = supabaseAdmin();
   const [tecnicosRes, visitasRes] = await Promise.all([
@@ -35,13 +29,13 @@ export default async function DashboardPage({
           month: "long",
         })}
       </PageHeader>
-      <DashboardLive
-        fecha={fecha}
-        tecnicos={(tecnicosRes.data ?? []) as Tecnico[]}
-        visitasIniciales={(visitasRes.data ?? []) as VisitaConRelaciones[]}
-        tecnicoSeleccionadoId={tecnicoSeleccionadoId}
-        visitaSeleccionadaId={visitaSeleccionadaId}
-      />
+      <div>
+        <DashboardLive
+          fecha={fecha}
+          tecnicos={(tecnicosRes.data ?? []) as Tecnico[]}
+          visitasIniciales={(visitasRes.data ?? []) as VisitaConRelaciones[]}
+        />
+      </div>
     </div>
   );
 }

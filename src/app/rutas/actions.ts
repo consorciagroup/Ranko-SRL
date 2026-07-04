@@ -10,9 +10,17 @@ import type { ChecklistItem } from "@/lib/types";
 export async function agregarParada(formData: FormData) {
   const fecha = String(formData.get("fecha") || hoyISO());
   const tecnicoId = String(formData.get("tecnico_id"));
-  const direccionId = String(formData.get("direccion_id"));
-  const tipos = formData.getAll("tipos_trabajo").map(String);
-  if (!tecnicoId || !direccionId || tipos.length === 0) return;
+  const direccionIds = formData.getAll("direcciones").map(String);
+  if (!tecnicoId || direccionIds.length === 0) return;
+
+  const pares: { direccionId: string; tipoTrabajoId: string }[] = [];
+  for (const direccionId of direccionIds) {
+    const tiposDeEstaDireccion = formData.getAll(`tipos_${direccionId}`).map(String);
+    for (const tipoTrabajoId of tiposDeEstaDireccion) {
+      pares.push({ direccionId, tipoTrabajoId });
+    }
+  }
+  if (pares.length === 0) return;
 
   const db = supabaseAdmin();
 
@@ -26,7 +34,7 @@ export async function agregarParada(formData: FormData) {
     .maybeSingle();
   let orden = (max?.orden ?? 0) + 1;
 
-  for (const tipoTrabajoId of tipos) {
+  for (const { direccionId, tipoTrabajoId } of pares) {
     const { data: visita, error } = await db
       .from("visitas")
       .insert({

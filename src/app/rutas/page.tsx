@@ -12,9 +12,11 @@ import { EstadoBadge } from "@/components/EstadoBadge";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
+import { CreateModal } from "@/components/ui/CreateModal";
 import { DeleteButton } from "@/components/ui/DeleteButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { DetailPanel } from "@/components/ui/DetailPanel";
+import { AgregarRutaFields } from "./AgregarRutaFields";
 import { agregarParada, eliminarVisita, enviarRuta } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -62,19 +64,36 @@ export default async function RutasPage({
       <PageHeader
         title="Rutas"
         actions={
-          <form method="get" className="flex items-end gap-2 text-sm">
-            <label htmlFor="fecha" className="flex flex-col gap-1">
-              <span className="text-neutral-500">Día</span>
-              <input
-                id="fecha"
-                type="date"
-                name="fecha"
-                defaultValue={fecha}
-                className="rounded-md border border-neutral-300 px-3 py-2"
+          <div className="flex items-end gap-3">
+            <form method="get" className="flex items-end gap-2 text-sm">
+              <label htmlFor="fecha" className="flex flex-col gap-1">
+                <span className="text-neutral-500">Día</span>
+                <input
+                  id="fecha"
+                  type="date"
+                  name="fecha"
+                  defaultValue={fecha}
+                  className="rounded-md border border-neutral-300 px-3 py-2"
+                />
+              </label>
+              <Button variant="secondary">Ver</Button>
+            </form>
+            <CreateModal
+              trigger="Agregar ruta"
+              title="Agregar ruta"
+              submitLabel="Crear ruta"
+              pendingLabel="Agregando…"
+              action={agregarParada}
+              contentClassName="max-w-2xl"
+            >
+              <AgregarRutaFields
+                fecha={fecha}
+                tecnicos={tecnicos}
+                direcciones={direcciones}
+                tipos={tipos}
               />
-            </label>
-            <Button variant="secondary">Ver</Button>
-          </form>
+            </CreateModal>
+          </div>
         }
       >
         Cada tipo de trabajo en una dirección genera una visita independiente con
@@ -83,58 +102,8 @@ export default async function RutasPage({
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      {/* Agregar parada */}
-      <form
-        action={agregarParada}
-        className="rounded-lg border border-neutral-200 bg-white p-4"
-      >
-        <input type="hidden" name="fecha" value={fecha} />
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="font-medium">Técnico</span>
-            <select
-              name="tecnico_id"
-              required
-              className="w-48 rounded-md border border-neutral-300 px-3 py-2"
-            >
-              {tecnicos.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.nombre}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="font-medium">Dirección</span>
-            <select
-              name="direccion_id"
-              required
-              className="w-64 rounded-md border border-neutral-300 px-3 py-2"
-            >
-              {direcciones.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.direccion} — {d.cliente}
-                </option>
-              ))}
-            </select>
-          </label>
-          <fieldset className="flex flex-col gap-1 text-sm">
-            <legend className="font-medium">Tipos de trabajo</legend>
-            <div className="flex flex-wrap gap-3 rounded-md border border-neutral-300 px-3 py-2">
-              {tipos.map((t) => (
-                <label key={t.id} className="flex items-center gap-1.5">
-                  <input type="checkbox" name="tipos_trabajo" value={t.id} />
-                  {t.nombre}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          <SubmitButton pendingText="Agregando…">Agregar parada</SubmitButton>
-        </div>
-      </form>
-
       {/* Rutas por técnico */}
-      <div className="mt-8 grid gap-6">
+      <div className="grid gap-6">
         {tecnicos
           .filter((t) => porTecnico.has(t.id))
           .map((t) => {
