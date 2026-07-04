@@ -45,6 +45,8 @@ export default async function CatalogoPage({
     <div className="max-w-7xl">
       <PageHeader
         title="Tipos de trabajo"
+        search
+        searchPlaceholder="Buscar tipo de trabajo…"
         actions={
           <CreateModal
             trigger="Agregar tipo de trabajo"
@@ -58,7 +60,7 @@ export default async function CatalogoPage({
               <input
                 name="nombre"
                 required
-                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                className="w-full rounded-md border border-hairline bg-surface px-3 py-2"
                 placeholder="Recarga de matafuegos"
               />
             </label>
@@ -72,22 +74,22 @@ export default async function CatalogoPage({
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
       {tipos.length > 0 ? (
-        <div className="rounded-lg border border-neutral-200 bg-white">
+        <div className="overflow-hidden rounded-xl bg-surface hairline">
           {tipos.map((t) => (
             <div
               key={t.id}
-              className="relative flex items-center justify-between border-b border-neutral-100 px-4 py-3 last:border-0"
+              className="relative flex items-center justify-between px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none hover:bg-canvas"
             >
               <div>
                 <Link
                   href={`?trabajo=${t.id}`}
                   scroll={false}
-                  className="font-medium hover:underline"
+                  className="font-medium text-ink-2 hover:underline"
                 >
                   <span className="absolute inset-0" aria-hidden="true" />
                   {t.nombre}
                 </Link>
-                <div className="text-xs text-neutral-500">
+                <div className="text-xs text-ink-muted">
                   {conteo.get(t.id) ?? 0} ítems en el checklist
                 </div>
               </div>
@@ -118,12 +120,12 @@ export default async function CatalogoPage({
               <ol className="space-y-3">
                 {itemsTrabajo.map((item, i) => (
                   <li key={item.id} className="flex gap-3">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold text-neutral-600">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-canvas text-xs font-semibold text-ink-muted hairline">
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="text-sm text-neutral-900">{item.texto}</div>
-                      <div className="text-xs text-neutral-500">
+                      <div className="text-sm text-ink">{item.texto}</div>
+                      <div className="text-xs text-ink-muted">
                         {TIPO_DATO_LABEL[item.tipo_dato]} ·{" "}
                         {item.obligatorio ? "Obligatorio" : "Opcional"}
                       </div>
@@ -132,13 +134,13 @@ export default async function CatalogoPage({
                 ))}
               </ol>
             ) : (
-              <p className="text-sm text-neutral-500">
+              <p className="text-sm text-ink-muted">
                 Este tipo de trabajo todavía no tiene ítems en el checklist.
               </p>
             )}
             <Link
               href={`/catalogo/${trabajoSeleccionado.id}`}
-              className="inline-block text-sm text-ranko-dark hover:underline"
+              className="inline-block text-sm font-semibold text-ranko hover:underline"
             >
               Editar checklist →
             </Link>

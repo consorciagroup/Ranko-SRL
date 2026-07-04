@@ -27,13 +27,13 @@ export default async function ChecklistBuilderPage({
 
   return (
     <div className="max-w-7xl">
-      <Link href="/catalogo" className="text-sm text-ranko-dark hover:underline">
+      <Link href="/catalogo" className="text-sm font-medium text-ink-muted hover:text-ink">
         ← Tipos de trabajo
       </Link>
-      <h1 className="mt-2 text-2xl font-bold tracking-tight text-neutral-900">
+      <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-ink">
         {tipo.nombre}
       </h1>
-      <p className="mt-1 text-sm text-neutral-500">
+      <p className="mt-1 text-sm text-ink-muted">
         Checklist que el técnico completa ítem por ítem en WhatsApp, en este orden.
         Los cambios no afectan visitas ya asignadas.
       </p>
@@ -42,14 +42,14 @@ export default async function ChecklistBuilderPage({
         {items.map((item, idx) => (
           <div
             key={item.id}
-            className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-4 py-3"
+            className="flex items-center gap-3 rounded-xl bg-surface px-4 py-3 hairline"
           >
-            <span className="w-6 text-sm font-semibold text-neutral-400">
+            <span className="w-6 text-sm font-semibold text-ink-muted">
               {idx + 1}.
             </span>
             <div className="flex-1">
-              <div className="text-sm">{item.texto}</div>
-              <div className="text-xs text-neutral-500">
+              <div className="text-sm text-ink">{item.texto}</div>
+              <div className="text-xs text-ink-muted">
                 {TIPO_DATO_LABEL[item.tipo_dato]}
                 {item.obligatorio ? " · obligatorio" : " · opcional"}
               </div>
@@ -61,7 +61,7 @@ export default async function ChecklistBuilderPage({
                 name="dir"
                 value="arriba"
                 disabled={idx === 0}
-                className="rounded border border-neutral-200 px-2 py-1 text-xs disabled:opacity-30"
+                className="rounded-md px-2 py-1 text-xs text-ink-muted hairline hover:bg-black/[0.04] disabled:opacity-30"
                 title="Subir"
               >
                 ↑
@@ -70,7 +70,7 @@ export default async function ChecklistBuilderPage({
                 name="dir"
                 value="abajo"
                 disabled={idx === items.length - 1}
-                className="rounded border border-neutral-200 px-2 py-1 text-xs disabled:opacity-30"
+                className="rounded-md px-2 py-1 text-xs text-ink-muted hairline hover:bg-black/[0.04] disabled:opacity-30"
                 title="Bajar"
               >
                 ↓
@@ -90,7 +90,7 @@ export default async function ChecklistBuilderPage({
 
       <form
         action={agregarItem}
-        className="mt-6 flex flex-wrap items-end gap-3 rounded-lg border border-neutral-200 bg-white p-4"
+        className="mt-6 flex flex-wrap items-end gap-3 rounded-xl bg-surface p-4 hairline"
       >
         <input type="hidden" name="tipo_trabajo_id" value={tipo.id} />
         <label className="flex flex-col gap-1 text-sm">
@@ -98,7 +98,7 @@ export default async function ChecklistBuilderPage({
           <input
             name="texto"
             required
-            className="w-80 rounded-md border border-neutral-300 px-3 py-2"
+            className="w-80 rounded-md border border-hairline bg-surface px-3 py-2"
             placeholder="¿Se verificó la presión del equipo?"
           />
         </label>
@@ -106,7 +106,7 @@ export default async function ChecklistBuilderPage({
           <span className="font-medium">Tipo de dato</span>
           <select
             name="tipo_dato"
-            className="rounded-md border border-neutral-300 px-3 py-2"
+            className="rounded-md border border-hairline bg-surface px-3 py-2"
           >
             <option value="si_no">Sí / No</option>
             <option value="texto">Texto libre</option>

@@ -16,26 +16,36 @@ function esActivo(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
+// Fila de nav: punto de 6px + label. Activo → punto rojo de marca + tinte rojo
+// + texto blanco; inactivo → gris apagado que se aclara levemente en hover.
 function itemClass(active: boolean) {
   return active
-    ? "block rounded-md border-l-2 border-ranko bg-white/10 px-3 py-2 text-sm font-semibold text-white"
-    : "block rounded-md border-l-2 border-transparent px-3 py-2 text-sm font-medium text-neutral-300 hover:bg-white/10 hover:text-white";
+    ? "flex items-center gap-2.5 rounded-md bg-ranko/[0.14] px-3 py-2 text-sm font-medium text-white"
+    : "flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-sidebar-muted hover:bg-white/[0.06] hover:text-white";
 }
 
 export function SidebarNav() {
   const pathname = usePathname();
   return (
-    <nav className="mt-3 flex flex-1 flex-col gap-1 px-3 pb-4">
-      {PRINCIPAL.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          aria-current={esActivo(pathname, item.href) ? "page" : undefined}
-          className={itemClass(esActivo(pathname, item.href))}
-        >
-          {item.label}
-        </Link>
-      ))}
+    <nav className="flex flex-col gap-1">
+      {PRINCIPAL.map((item) => {
+        const active = esActivo(pathname, item.href);
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={active ? "page" : undefined}
+            className={itemClass(active)}
+          >
+            <span
+              className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                active ? "bg-ranko" : "bg-sidebar-muted"
+              }`}
+            />
+            {item.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

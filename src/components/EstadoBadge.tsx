@@ -1,15 +1,16 @@
 import type { EstadoVisita } from "@/lib/types";
 import { ESTADO_VISITA_LABEL } from "@/lib/types";
 
+// Pills de estado sólidas (fill + texto blanco), no pastel — por feedback
+// directo del diseño: colores más fuertes para una herramienta usada bajo
+// presión de tiempo. Espeja ESTADO_VISITA_LABEL de src/lib/types.ts.
 const ESTADO_COLOR: Record<EstadoVisita, string> = {
-  asignada: "bg-neutral-100 text-neutral-600",
-  en_curso: "bg-blue-100 text-blue-700",
-  completada: "bg-green-100 text-green-700",
-  en_revision: "bg-amber-100 text-amber-700",
-  // Mismo verde que "completada", pero con jerarquía por ring: "aprobada" es
-  // el estado final. Dos hues de verde casi iguales no comunicaban nada.
-  aprobada: "bg-green-100 text-green-800 ring-1 ring-green-600/40",
-  sin_acceso: "bg-red-100 text-red-700",
+  asignada: "bg-estado-asignada",
+  en_curso: "bg-estado-encurso",
+  completada: "bg-estado-completada",
+  en_revision: "bg-estado-revision",
+  aprobada: "bg-estado-aprobada",
+  sin_acceso: "bg-estado-sinacceso",
 };
 
 export function EstadoBadge({
@@ -22,13 +23,13 @@ export function EstadoBadge({
   return (
     <span className="inline-flex items-center gap-1.5">
       <span
-        className={`rounded-full px-2.5 py-1 text-xs font-medium ${ESTADO_COLOR[estado]}`}
+        className={`rounded-full px-2.5 py-1 text-xs font-semibold text-white ${ESTADO_COLOR[estado]}`}
       >
         {ESTADO_VISITA_LABEL[estado]}
       </span>
       {conObservacion && (
         <span
-          className="rounded-full bg-orange-100 px-2.5 py-1 text-xs font-medium text-orange-700"
+          className="rounded-full bg-estado-observacion px-2.5 py-1 text-xs font-semibold text-white"
           title="Tiene ítems con observación o incompletos"
         >
           ⚠ Obs.

@@ -1,45 +1,59 @@
-import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { hoyISO } from "@/lib/bot/menu";
+import { fechaRelativa } from "@/lib/format";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CreateModal } from "@/components/ui/CreateModal";
-import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
-import { DetailPanel } from "@/components/ui/DetailPanel";
-import { Field } from "@/components/ui/Field";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { TechCard } from "@/components/ui/TechCard";
 import type { Tecnico } from "@/lib/types";
 import { crearTecnico, eliminarTecnico } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function TecnicosPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ tecnico?: string }>;
-}) {
-  const { tecnico: tecnicoId } = await searchParams;
+// Forma local del join que alimenta los KPIs de cada tarjeta.
+type VisitaStat = {
+  tecnico_id: string;
+  fecha: string;
+  direcciones: { cliente: string } | null;
+};
+
+export default async function TecnicosPage() {
+  const hoy = hoyISO();
+  const mesActual = hoy.slice(0, 7); // "YYYY-MM"
 
   const db = supabaseAdmin();
-  const [{ data, error }, visitasHoyRes] = await Promise.all([
+  const [{ data, error }, visitasRes] = await Promise.all([
     db.from("tecnicos").select("*").eq("activo", true).order("nombre"),
-    tecnicoId
-      ? db
-          .from("visitas")
-          .select("*", { count: "exact", head: true })
-          .eq("tecnico_id", tecnicoId)
-          .eq("fecha", hoyISO())
-      : Promise.resolve({ count: null }),
+    // Todas las visitas ordenadas de más reciente a más vieja: la primera de
+    // cada técnico es su "último trabajo", y contamos las del mes en curso.
+    db
+      .from("visitas")
+      .select("tecnico_id, fecha, direcciones(cliente)")
+      .order("fecha", { ascending: false }),
   ]);
   if (error) throw new Error(error.message);
   const tecnicos = (data ?? []) as Tecnico[];
-  const tecnicoSeleccionado = tecnicoId
-    ? tecnicos.find((t) => t.id === tecnicoId)
-    : undefined;
-  const visitasHoy = visitasHoyRes.count ?? 0;
+  const visitas = (visitasRes.data ?? []) as unknown as VisitaStat[];
+
+  const stats = new Map<
+    string,
+    { mes: number; ultimo: { fecha: string; cliente: string } | null }
+  >();
+  for (const v of visitas) {
+    const s = stats.get(v.tecnico_id) ?? { mes: 0, ultimo: null };
+    if (v.fecha.slice(0, 7) === mesActual) s.mes += 1;
+    if (!s.ultimo) {
+      s.ultimo = { fecha: v.fecha, cliente: v.direcciones?.cliente ?? "—" };
+    }
+    stats.set(v.tecnico_id, s);
+  }
 
   return (
-    <div className="max-w-7xl">
+    <div className="mx-auto max-w-[1400px]">
       <PageHeader
         title="Técnicos"
+        search
+        searchPlaceholder="Buscar técnico…"
         actions={
           <CreateModal
             trigger="Agregar técnico"
@@ -53,7 +67,7 @@ export default async function TecnicosPage({
               <input
                 name="nombre"
                 required
-                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                className="w-full rounded-md border border-hairline bg-surface px-3 py-2"
                 placeholder="Juan Pérez"
               />
             </label>
@@ -62,87 +76,44 @@ export default async function TecnicosPage({
               <input
                 name="telefono"
                 required
-                className="w-full rounded-md border border-neutral-300 px-3 py-2"
+                className="w-full rounded-md border border-hairline bg-surface px-3 py-2"
                 placeholder="5491122334455"
               />
             </label>
           </CreateModal>
         }
       >
-        El teléfono tiene que ser el número de WhatsApp del técnico, con código de
-        país y sin espacios (ej: 5491122334455).
+        Equipo de mantenimiento y su actividad. El teléfono tiene que ser el número
+        de WhatsApp del técnico, con código de país y sin espacios (ej:
+        5491122334455).
       </PageHeader>
 
-      <div className="mt-6 flex items-start gap-6">
-      <div className="min-w-0 flex-1">
-      <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-neutral-200 text-left text-neutral-500">
-            <th className="px-4 py-3 font-medium">Nombre</th>
-            <th className="px-4 py-3 font-medium">Teléfono</th>
-            <th className="w-24 px-4 py-3" />
-          </tr>
-        </thead>
-        <tbody>
-          {tecnicos.map((t) => (
-            <tr
-              key={t.id}
-              className="relative border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
-            >
-              <td className="px-4 py-3">
-                <Link
-                  href={`?tecnico=${t.id}`}
-                  scroll={false}
-                  className="font-medium hover:underline"
-                >
-                  <span className="absolute inset-0" aria-hidden="true" />
-                  {t.nombre}
-                </Link>
-              </td>
-              <td className="px-4 py-3 font-mono text-xs">{t.telefono}</td>
-              <td className="relative z-10 px-4 py-3 text-right">
-                <ConfirmDeleteButton
-                  action={eliminarTecnico}
-                  id={t.id}
-                  titulo="Eliminar técnico"
-                  mensaje={`El técnico "${t.nombre}" dejará de recibir visitas por WhatsApp. Las visitas ya cargadas no se modifican.`}
-                />
-              </td>
-            </tr>
-          ))}
-          {tecnicos.length === 0 && (
-            <tr>
-              <td colSpan={3} className="px-4 py-6 text-center text-neutral-500">
-                Sin técnicos cargados todavía.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      </div>
-      </div>
-
-      <DetailPanel
-        title={tecnicoSeleccionado?.nombre}
-        closeHref="?"
-        emptyMessage="Seleccioná un técnico para ver su ficha."
-      >
-        {tecnicoSeleccionado ? (
-          <dl className="space-y-3">
-            <Field label="Teléfono">
-              <span className="font-mono text-xs">
-                {tecnicoSeleccionado.telefono}
-              </span>
-            </Field>
-            <Field label="Activo">
-              {tecnicoSeleccionado.activo ? "Sí" : "No"}
-            </Field>
-            <Field label="Visitas de hoy">{visitasHoy}</Field>
-          </dl>
-        ) : undefined}
-      </DetailPanel>
-      </div>
+      {tecnicos.length > 0 ? (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {tecnicos.map((t) => {
+            const s = stats.get(t.id);
+            return (
+              <TechCard
+                key={t.id}
+                id={t.id}
+                nombre={t.nombre}
+                telefono={t.telefono}
+                reportesMes={s?.mes ?? 0}
+                ultimoTrabajo={
+                  s?.ultimo
+                    ? `${s.ultimo.cliente} · ${fechaRelativa(s.ultimo.fecha, hoy)}`
+                    : null
+                }
+                eliminar={eliminarTecnico}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <EmptyState>
+          Sin técnicos cargados todavía. Agregá el primero desde el botón de arriba.
+        </EmptyState>
+      )}
     </div>
   );
 }

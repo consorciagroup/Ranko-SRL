@@ -42,7 +42,7 @@ export function CreateModal({
         labelledBy={titleId}
         contentClassName={contentClassName}
       >
-        <h2 id={titleId} className="text-xl font-bold text-neutral-900">
+        <h2 id={titleId} className="font-display text-xl font-bold text-ink">
           {title}
         </h2>
         <form action={action} className="mt-4 space-y-4">

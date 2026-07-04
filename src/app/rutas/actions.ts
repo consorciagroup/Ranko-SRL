@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { enviarMenuParadas, hoyISO } from "@/lib/bot/menu";
 import type { ChecklistItem } from "@/lib/types";
@@ -70,6 +71,9 @@ export async function agregarParada(formData: FormData) {
   }
 
   revalidatePath("/rutas");
+  // El wizard (/rutas/nueva) es el único que dispara esta action; al terminar
+  // volvemos al listado, donde se ve la ruta armada y se envía por WhatsApp.
+  redirect("/rutas");
 }
 
 export async function eliminarVisita(formData: FormData) {

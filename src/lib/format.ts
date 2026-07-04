@@ -18,3 +18,16 @@ export function formatFecha(fecha: string): string {
     year: "numeric",
   });
 }
+
+// Fecha relativa amigable: "hoy" / "ayer" / "dd/mm" — para metadatos compactos
+// tipo "Último trabajo". `hoy` es el "YYYY-MM-DD" de referencia (hoyISO()).
+export function fechaRelativa(fecha: string, hoy: string): string {
+  if (fecha === hoy) return "hoy";
+  const ayer = new Date(`${hoy}T12:00:00`);
+  ayer.setDate(ayer.getDate() - 1);
+  if (fecha === ayer.toISOString().slice(0, 10)) return "ayer";
+  return new Date(`${fecha}T12:00:00`).toLocaleDateString("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+}

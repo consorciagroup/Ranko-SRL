@@ -16,17 +16,17 @@ export function DetailPanel({
   children?: React.ReactNode;
 }) {
   return (
-    <aside className="w-96 shrink-0 self-start rounded-lg border border-neutral-200 bg-white">
+    <aside className="w-96 shrink-0 self-start rounded-xl bg-surface hairline">
       {children ? (
         <>
-          <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
-            <h2 className="font-semibold">{title}</h2>
+          <header className="flex items-center justify-between px-4 py-3 shadow-[inset_0_-1px_0_var(--color-hairline)]">
+            <h2 className="font-display font-bold text-ink">{title}</h2>
             {closeHref && (
               <Link
                 href={closeHref}
                 scroll={false}
                 aria-label="Cerrar panel"
-                className="rounded-md p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ranko/40"
+                className="rounded-md p-1 text-ink-muted hover:bg-black/[0.04] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ranko/40"
               >
                 <svg
                   viewBox="0 0 24 24"
