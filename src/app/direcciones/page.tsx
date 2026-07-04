@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { formatHora } from "@/lib/format";
+import { formatFecha, formatHora } from "@/lib/format";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { CreateModal } from "@/components/ui/CreateModal";
 import { ConfirmDeleteButton } from "@/components/ui/ConfirmDeleteButton";
@@ -172,10 +172,7 @@ export default async function DireccionesPage({
                     <li key={v.id}>
                       <div className="flex items-center justify-between gap-2">
                         <span className="text-sm font-medium">
-                          {new Date(`${v.fecha}T12:00:00`).toLocaleDateString(
-                            "es-AR",
-                            { day: "numeric", month: "short", year: "numeric" }
-                          )}
+                          {formatFecha(v.fecha)}
                           {v.iniciada_at && (
                             <span className="ml-1 font-normal text-neutral-500">
                               · {formatHora(v.iniciada_at)}

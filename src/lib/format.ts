@@ -8,3 +8,13 @@ export function formatHora(iso: string): string {
     minute: "2-digit",
   });
 }
+
+// Fecha corta (ej: "4 jul 2026") a partir de un "YYYY-MM-DD". El T12:00:00
+// evita que el cambio de huso corra la fecha un día para atrás/adelante.
+export function formatFecha(fecha: string): string {
+  return new Date(`${fecha}T12:00:00`).toLocaleDateString("es-AR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
