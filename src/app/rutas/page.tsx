@@ -114,7 +114,7 @@ export default async function RutasPage({
               href="/rutas/nueva"
               className="inline-flex items-center rounded-lg bg-ranko px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-ranko-dark"
             >
-              Agregar ruta
+              + Nueva ruta
             </Link>
           </div>
         }
