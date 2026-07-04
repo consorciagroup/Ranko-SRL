@@ -1,15 +1,53 @@
 @import "tailwindcss";
 
-/* Colores de marca Ranko SRL (rojo del sitio/logo: rankosrl.com.ar) */
+/* ==========================================================================
+   Ranko — Design System (portado del sistema de diseño de Claude Design)
+   Tema único real: canvas/superficies claras, sidebar de carbón, acento rojo
+   de marca. Estados semánticos SÓLIDOS (fill + texto blanco), no pastel.
+   Los tamaños siguen la escala de Tailwind en rem, así el root a 18px mantiene
+   la escala generosa mientras respeta las proporciones del diseño.
+   ========================================================================== */
 @theme {
+  /* ---- Marca (rojo real del sitio/logo: rankosrl.com.ar) ---- */
   --color-ranko: #fd3232;
   --color-ranko-dark: #d92020;
-  --color-ranko-ink: #3a3a3a;
+  --color-ranko-ink: #3a3a3a; /* sidebar de carbón */
+
+  /* ---- Neutros del sistema (escala neutral de Tailwind, hex exactos) ---- */
+  --color-canvas: #fafafa; /* fondo de la app */
+  --color-surface: #ffffff; /* cards, tablas, inputs */
+  --color-surface-2: #f2f2f2; /* placeholder foto (antes) */
+  --color-surface-3: #e8e8e8; /* placeholder foto (después) */
+  --color-hairline: #e5e5e5; /* borde de 1px */
+  --color-ink: #171717; /* títulos, valores grandes */
+  --color-ink-2: #262626; /* nombres, texto de filas */
+  --color-ink-muted: #737373; /* meta / texto secundario */
+
+  /* ---- Sidebar (la única superficie oscura) ---- */
+  --color-sidebar-muted: #d4d4d4; /* texto de nav inactivo */
+
+  /* ---- Estados de la visita — sólidos/saturados, fill + texto blanco ---- */
+  --color-estado-asignada: #52525b;
+  --color-estado-encurso: #2563eb;
+  --color-estado-completada: #15803d;
+  --color-estado-revision: #b45309;
+  --color-estado-aprobada: #15803d;
+  --color-estado-sinacceso: #fd3232;
+  --color-estado-observacion: #c2410c;
 }
 
+/* Fuentes: Geist (cuerpo, real) + Geist Mono (KPIs numéricos) + Archivo
+   (display, títulos/encabezados — adición intencional del sistema). */
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-archivo);
+}
+
+/* Hairline interior de 1px: la técnica de borde dominante del sistema
+   (box-shadow inset en vez de border, sin ocupar layout). */
+@utility hairline {
+  box-shadow: inset 0 0 0 1px var(--color-hairline);
 }
 
 /* Escala base más generosa. Tailwind v4 define tipografía y espaciado en rem,

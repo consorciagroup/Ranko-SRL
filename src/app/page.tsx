@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { hoyISO } from "@/lib/bot/menu";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { Button } from "@/components/ui/Button";
 import type { Tecnico, VisitaConRelaciones } from "@/lib/types";
 import { DashboardLive } from "./DashboardLive";
 
@@ -21,21 +22,29 @@ export default async function DashboardPage() {
   if (visitasRes.error) throw new Error(visitasRes.error.message);
 
   return (
-    <div className="max-w-7xl">
-      <PageHeader title="Visitas de hoy">
+    <div className="mx-auto max-w-[1400px]">
+      <PageHeader
+        title="Visitas de hoy"
+        search
+        searchPlaceholder="Buscar reporte, cliente o técnico…"
+        actions={
+          // TODO(cablear): "Nuevo reporte" es decorativo — hoy los reportes
+          // los genera el bot de WhatsApp, no se crean desde el panel. Definir
+          // qué flujo dispara este botón (o quitarlo) cuando se decida.
+          <Button title="Pendiente de cablear">+ Nuevo reporte</Button>
+        }
+      >
         {new Date(`${fecha}T12:00:00`).toLocaleDateString("es-AR", {
           weekday: "long",
           day: "numeric",
           month: "long",
         })}
       </PageHeader>
-      <div>
-        <DashboardLive
-          fecha={fecha}
-          tecnicos={(tecnicosRes.data ?? []) as Tecnico[]}
-          visitasIniciales={(visitasRes.data ?? []) as VisitaConRelaciones[]}
-        />
-      </div>
+      <DashboardLive
+        fecha={fecha}
+        tecnicos={(tecnicosRes.data ?? []) as Tecnico[]}
+        visitasIniciales={(visitasRes.data ?? []) as VisitaConRelaciones[]}
+      />
     </div>
   );
 }
