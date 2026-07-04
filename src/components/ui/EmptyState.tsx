@@ -2,7 +2,7 @@
 // neutral-400 no lo cumple) y padding fijo.
 export function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500">
+    <div className="rounded-lg border border-dashed border-hairline p-8 text-center text-sm text-ink-muted">
       {children}
     </div>
   );

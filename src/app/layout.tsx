@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Archivo } from "next/font/google";
 import Image from "next/image";
 import { SidebarNav } from "@/components/SidebarNav";
 import "./globals.css";
@@ -12,6 +12,14 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// Archivo — fuente display para títulos y encabezados de sección (adición
+// intencional del design system, no está en el repo original que usa solo Geist).
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  weight: ["600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -27,13 +35,13 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${archivo.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-neutral-50 text-neutral-900">
+      <body className="min-h-full bg-canvas text-ink">
         <div className="flex min-h-screen">
-          <aside className="flex w-56 shrink-0 flex-col bg-ranko-ink text-white">
-            <div className="border-b border-white/10 px-4 py-5">
-              <div className="rounded-md bg-white px-3 py-2">
+          <aside className="flex w-60 shrink-0 flex-col bg-ranko-ink px-5 py-7 text-white">
+            <div className="mb-6 flex flex-col gap-2">
+              <div className="inline-flex self-start rounded-md bg-white px-3 py-2">
                 <Image
                   src="/logo-ranko.png"
                   alt="Ranko SRL — Ingeniería contra incendios"
@@ -42,13 +50,28 @@ export default function RootLayout({
                   priority
                 />
               </div>
-              <div className="mt-2 px-1 text-xs text-neutral-300">
-                Panel de logística
+              <div className="flex items-center gap-2 pl-0.5">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ranko" />
+                <span className="text-[0.65rem] font-semibold uppercase leading-tight tracking-[0.12em] text-sidebar-muted">
+                  Panel de logística
+                </span>
               </div>
             </div>
+
             <SidebarNav />
+
+            <div className="mt-auto flex items-center gap-2.5 rounded-md bg-surface p-3">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ranko text-xs font-semibold text-white">
+                RS
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="text-sm font-semibold text-ink-2">Ranko SRL</span>
+                <span className="text-xs text-ink-muted">Panel interno</span>
+              </div>
+            </div>
           </aside>
-          <main className="flex-1 px-8 py-8">{children}</main>
+
+          <main className="flex-1 px-9 py-8">{children}</main>
         </div>
       </body>
     </html>
