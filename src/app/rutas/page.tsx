@@ -26,9 +26,9 @@ type Grupo = { tecnico: Tecnico; fecha: string; visitas: VisitaConRelaciones[] }
 export default async function RutasPage({
   searchParams,
 }: {
-  searchParams: Promise<{ fecha?: string; tecnico?: string }>;
+  searchParams: Promise<{ fecha?: string; tecnico?: string; ruta?: string }>;
 }) {
-  const { fecha: fechaFiltro, tecnico: tecnicoId } = await searchParams;
+  const { fecha: fechaFiltro, tecnico: tecnicoId, ruta: rutaFecha } = await searchParams;
   // Sin filtro se muestran todas las fechas; el modal de alta igual necesita
   // una fecha para precargar, y ahí sí tiene sentido asumir "hoy".
   const fechaModalDefault = fechaFiltro ?? hoyISO();
@@ -83,12 +83,16 @@ export default async function RutasPage({
   const tecnicoSeleccionado = tecnicoId
     ? tecnicos.find((t) => t.id === tecnicoId)
     : undefined;
-  const paradasSeleccionadas = tecnicoSeleccionado
-    ? porTecnico.get(tecnicoSeleccionado.id) ?? []
-    : [];
+  // El panel muestra solo la ruta del día que se clickeó, no todas las del técnico.
+  const paradasSeleccionadas =
+    tecnicoSeleccionado && rutaFecha
+      ? (porTecnico.get(tecnicoSeleccionado.id) ?? []).filter(
+          (v) => v.fecha === rutaFecha
+        )
+      : [];
 
-  const hrefTecnico = (id: string) =>
-    fechaFiltro ? `?fecha=${fechaFiltro}&tecnico=${id}` : `?tecnico=${id}`;
+  const hrefTecnico = (id: string, fecha: string) =>
+    `?${fechaFiltro ? `fecha=${fechaFiltro}&` : ""}tecnico=${id}&ruta=${fecha}`;
 
   return (
     <div className="max-w-7xl">
@@ -153,7 +157,7 @@ export default async function RutasPage({
             <header className="relative flex items-center justify-between border-b border-neutral-200 px-4 py-3">
               <div>
                 <Link
-                  href={hrefTecnico(g.tecnico.id)}
+                  href={hrefTecnico(g.tecnico.id, g.fecha)}
                   scroll={false}
                   className="font-semibold hover:underline"
                 >
@@ -215,11 +219,15 @@ export default async function RutasPage({
       </div>
 
       <DetailPanel
-        title={tecnicoSeleccionado ? `Ruta de ${tecnicoSeleccionado.nombre}` : undefined}
+        title={
+          tecnicoSeleccionado && rutaFecha
+            ? `Ruta de ${tecnicoSeleccionado.nombre} — ${formatFecha(rutaFecha)}`
+            : undefined
+        }
         closeHref={fechaFiltro ? `?fecha=${fechaFiltro}` : "?"}
         emptyMessage="Seleccioná un técnico para ver el orden de sus paradas."
       >
-        {tecnicoSeleccionado ? (
+        {tecnicoSeleccionado && rutaFecha ? (
           paradasSeleccionadas.length > 0 ? (
             <ol className="space-y-3">
               {paradasSeleccionadas.map((v, i) => (
@@ -235,7 +243,7 @@ export default async function RutasPage({
                       </span>
                     </div>
                     <div className="text-xs text-neutral-500">
-                      {formatFecha(v.fecha)} · {v.direcciones.cliente}
+                      {v.direcciones.cliente}
                     </div>
                     <div className="mt-1 flex items-center gap-2">
                       <EstadoBadge
