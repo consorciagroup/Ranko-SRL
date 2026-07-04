@@ -1,0 +1,55 @@
+import Link from "next/link";
+import { EmptyState } from "./EmptyState";
+
+// Panel de detalle fijo a la derecha, compartido por las 5 páginas. Sin
+// "use client": se usa tanto desde server components como desde DashboardLive
+// (client). Siempre montado; muestra el emptyMessage cuando no hay `children`.
+export function DetailPanel({
+  title,
+  closeHref,
+  emptyMessage,
+  children,
+}: {
+  title?: string;
+  closeHref?: string;
+  emptyMessage: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <aside className="w-96 shrink-0 self-start rounded-lg border border-neutral-200 bg-white">
+      {children ? (
+        <>
+          <header className="flex items-center justify-between border-b border-neutral-200 px-4 py-3">
+            <h2 className="font-semibold">{title}</h2>
+            {closeHref && (
+              <Link
+                href={closeHref}
+                scroll={false}
+                aria-label="Cerrar panel"
+                className="rounded-md p-1 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ranko/40"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                  />
+                </svg>
+              </Link>
+            )}
+          </header>
+          <div className="p-4">{children}</div>
+        </>
+      ) : (
+        <EmptyState>{emptyMessage}</EmptyState>
+      )}
+    </aside>
+  );
+}

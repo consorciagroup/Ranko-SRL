@@ -1,9 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { EstadoBadge } from "@/components/EstadoBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { DetailPanel } from "@/components/ui/DetailPanel";
+import { Field } from "@/components/ui/Field";
+import { formatHora } from "@/lib/format";
 import type { Tecnico, VisitaConRelaciones } from "@/lib/types";
 
 // Dashboard del día: recibe los datos iniciales del server y se mantiene en vivo
@@ -12,10 +16,14 @@ export function DashboardLive({
   fecha,
   tecnicos,
   visitasIniciales,
+  tecnicoSeleccionadoId,
+  visitaSeleccionadaId,
 }: {
   fecha: string;
   tecnicos: Tecnico[];
   visitasIniciales: VisitaConRelaciones[];
+  tecnicoSeleccionadoId?: string;
+  visitaSeleccionadaId?: string;
 }) {
   const [visitas, setVisitas] = useState(visitasIniciales);
   const [enVivo, setEnVivo] = useState(false);
@@ -64,8 +72,21 @@ export function DashboardLive({
     sinAcceso: visitas.filter((v) => v.estado === "sin_acceso").length,
   };
 
+  // Selección del panel, derivada en cada render (no en useState) para que
+  // siempre refleje el último dato de Realtime.
+  const visitaSeleccionada = visitaSeleccionadaId
+    ? visitas.find((v) => v.id === visitaSeleccionadaId)
+    : undefined;
+  const tecnicoSeleccionado = tecnicoSeleccionadoId
+    ? tecnicos.find((t) => t.id === tecnicoSeleccionadoId)
+    : undefined;
+  const visitasDeHoyTecnico = tecnicoSeleccionado
+    ? porTecnico.get(tecnicoSeleccionado.id) ?? []
+    : [];
+
   return (
-    <div>
+    <div className="flex items-start gap-6">
+      <div className="min-w-0 flex-1">
       <div className="flex items-center gap-2 text-xs text-neutral-500">
         <span
           className={`inline-block h-2 w-2 rounded-full ${
@@ -95,35 +116,44 @@ export function DashboardLive({
               className="rounded-lg border border-neutral-200 bg-white"
             >
               <header className="border-b border-neutral-200 px-4 py-3 font-semibold">
-                {t.nombre}
+                <Link
+                  href={`?tecnico=${t.id}`}
+                  scroll={false}
+                  className="hover:underline"
+                >
+                  {t.nombre}
+                </Link>
               </header>
               <ul>
                 {porTecnico.get(t.id)!.map((v) => (
-                  <li
-                    key={v.id}
-                    className="flex items-center justify-between border-b border-neutral-100 px-4 py-3 last:border-0"
-                  >
-                    <div>
-                      <div className="text-sm font-medium">
-                        {v.direcciones.direccion}
-                        <span className="ml-2 text-neutral-500">
-                          {v.tipos_trabajo.nombre}
-                        </span>
+                  <li key={v.id} className="border-b border-neutral-100 last:border-0">
+                    <Link
+                      href={`?visita=${v.id}`}
+                      scroll={false}
+                      className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50"
+                    >
+                      <div>
+                        <div className="text-sm font-medium">
+                          {v.direcciones.direccion}
+                          <span className="ml-2 text-neutral-500">
+                            {v.tipos_trabajo.nombre}
+                          </span>
+                        </div>
+                        <div className="text-xs text-neutral-500">
+                          {v.direcciones.cliente}
+                          {v.iniciada_at && (
+                            <> · inició {formatHora(v.iniciada_at)}</>
+                          )}
+                          {v.completada_at && (
+                            <> · terminó {formatHora(v.completada_at)}</>
+                          )}
+                        </div>
                       </div>
-                      <div className="text-xs text-neutral-500">
-                        {v.direcciones.cliente}
-                        {v.iniciada_at && (
-                          <> · inició {formatHora(v.iniciada_at)}</>
-                        )}
-                        {v.completada_at && (
-                          <> · terminó {formatHora(v.completada_at)}</>
-                        )}
-                      </div>
-                    </div>
-                    <EstadoBadge
-                      estado={v.estado}
-                      conObservacion={v.con_observacion}
-                    />
+                      <EstadoBadge
+                        estado={v.estado}
+                        conObservacion={v.con_observacion}
+                      />
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -135,6 +165,68 @@ export function DashboardLive({
           </EmptyState>
         )}
       </div>
+      </div>
+
+      <DetailPanel
+        title={
+          visitaSeleccionada
+            ? "Detalle de visita"
+            : tecnicoSeleccionado?.nombre
+        }
+        closeHref="/"
+        emptyMessage="Seleccioná un técnico o una visita para ver el detalle."
+      >
+        {visitaSeleccionada ? (
+          <div className="space-y-4">
+            <div>
+              <div className="text-sm font-medium">
+                {visitaSeleccionada.direcciones.direccion}
+              </div>
+              <div className="text-xs text-neutral-500">
+                {visitaSeleccionada.direcciones.cliente}
+              </div>
+            </div>
+            <dl className="space-y-3">
+              <Field label="Tipo de trabajo">
+                {visitaSeleccionada.tipos_trabajo.nombre}
+              </Field>
+              <Field label="Estado">
+                <EstadoBadge
+                  estado={visitaSeleccionada.estado}
+                  conObservacion={visitaSeleccionada.con_observacion}
+                />
+              </Field>
+              {visitaSeleccionada.iniciada_at && (
+                <Field label="Inició">
+                  {formatHora(visitaSeleccionada.iniciada_at)}
+                </Field>
+              )}
+              {visitaSeleccionada.completada_at && (
+                <Field label="Terminó">
+                  {formatHora(visitaSeleccionada.completada_at)}
+                </Field>
+              )}
+              {visitaSeleccionada.sin_acceso_motivo && (
+                <Field label="Motivo de sin acceso">
+                  {visitaSeleccionada.sin_acceso_motivo}
+                </Field>
+              )}
+            </dl>
+          </div>
+        ) : tecnicoSeleccionado ? (
+          <dl className="space-y-3">
+            <Field label="Teléfono">
+              <span className="font-mono text-xs">
+                {tecnicoSeleccionado.telefono}
+              </span>
+            </Field>
+            <Field label="Activo">
+              {tecnicoSeleccionado.activo ? "Sí" : "No"}
+            </Field>
+            <Field label="Visitas de hoy">{visitasDeHoyTecnico.length}</Field>
+          </dl>
+        ) : undefined}
+      </DetailPanel>
     </div>
   );
 }
@@ -160,12 +252,4 @@ function Kpi({
       <div className="text-xs text-neutral-500">{label}</div>
     </div>
   );
-}
-
-function formatHora(iso: string): string {
-  return new Date(iso).toLocaleTimeString("es-AR", {
-    timeZone: "America/Argentina/Buenos_Aires",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
