@@ -58,7 +58,7 @@ export default async function DireccionesPage({
         title="Direcciones"
         actions={
           <CreateModal
-            trigger="Agregar dirección"
+            trigger="+ Nueva dirección"
             title="Agregar dirección"
             submitLabel="Crear dirección"
             pendingLabel="Agregando…"

@@ -47,7 +47,7 @@ export default async function CatalogoPage({
         title="Tipos de trabajo"
         actions={
           <CreateModal
-            trigger="Agregar tipo de trabajo"
+            trigger="+ Nuevo trabajo"
             title="Agregar tipo de trabajo"
             submitLabel="Crear tipo de trabajo"
             pendingLabel="Creando…"

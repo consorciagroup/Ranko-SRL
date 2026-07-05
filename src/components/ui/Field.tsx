@@ -9,8 +9,8 @@ export function Field({
 }) {
   return (
     <div>
-      <dt className="text-xs font-medium text-neutral-500">{label}</dt>
-      <dd className="mt-0.5 text-sm text-neutral-900">{children}</dd>
+      <dt className="text-xs font-medium text-ink-muted">{label}</dt>
+      <dd className="mt-0.5 text-sm text-ink">{children}</dd>
     </div>
   );
 }

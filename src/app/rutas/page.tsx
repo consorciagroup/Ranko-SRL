@@ -1,23 +1,15 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { hoyISO } from "@/lib/bot/menu";
 import { formatFecha, formatHora } from "@/lib/format";
-import type {
-  Direccion,
-  Tecnico,
-  TipoTrabajo,
-  VisitaConRelaciones,
-} from "@/lib/types";
+import type { Tecnico, VisitaConRelaciones } from "@/lib/types";
 import { EstadoBadge } from "@/components/EstadoBadge";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { CreateModal } from "@/components/ui/CreateModal";
 import { DeleteButton } from "@/components/ui/DeleteButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { DetailPanel } from "@/components/ui/DetailPanel";
-import { AgregarRutaFields } from "./AgregarRutaFields";
-import { agregarParada, eliminarVisita, enviarRuta } from "./actions";
+import { eliminarVisita, enviarRuta } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +21,6 @@ export default async function RutasPage({
   searchParams: Promise<{ fecha?: string; tecnico?: string; ruta?: string }>;
 }) {
   const { fecha: fechaFiltro, tecnico: tecnicoId, ruta: rutaFecha } = await searchParams;
-  // Sin filtro se muestran todas las fechas; el modal de alta igual necesita
-  // una fecha para precargar, y ahí sí tiene sentido asumir "hoy".
-  const fechaModalDefault = fechaFiltro ?? hoyISO();
 
   const db = supabaseAdmin();
   let visitasQuery = db
@@ -41,15 +30,11 @@ export default async function RutasPage({
     .order("orden", { ascending: true });
   if (fechaFiltro) visitasQuery = visitasQuery.eq("fecha", fechaFiltro);
 
-  const [tecnicosRes, direccionesRes, tiposRes, visitasRes] = await Promise.all([
+  const [tecnicosRes, visitasRes] = await Promise.all([
     db.from("tecnicos").select("*").eq("activo", true).order("nombre"),
-    db.from("direcciones").select("*").eq("activo", true).order("cliente"),
-    db.from("tipos_trabajo").select("*").eq("activo", true).order("nombre"),
     visitasQuery,
   ]);
   const tecnicos = (tecnicosRes.data ?? []) as Tecnico[];
-  const direcciones = (direccionesRes.data ?? []) as Direccion[];
-  const tipos = (tiposRes.data ?? []) as TipoTrabajo[];
   const visitas = (visitasRes.data ?? []) as VisitaConRelaciones[];
 
   // Todas las visitas de cada técnico (cualquier fecha, ya vienen ordenadas
@@ -98,18 +83,20 @@ export default async function RutasPage({
     <div className="max-w-7xl">
       <PageHeader
         title="Rutas"
+        search
+        searchPlaceholder="Buscar técnico o cliente…"
         actions={
           <div className="flex items-end gap-3">
             <form method="get" className="flex items-end gap-2 text-sm">
               <label htmlFor="fecha" className="flex flex-col gap-1">
-                <span className="text-neutral-500">Día</span>
+                <span className="text-ink-muted">Día</span>
                 <input
                   id="fecha"
                   type="date"
                   name="fecha"
                   key={fechaFiltro ?? "todas"}
                   defaultValue={fechaFiltro}
-                  className="rounded-md border border-neutral-300 px-3 py-2"
+                  className="rounded-md border border-hairline bg-surface px-3 py-2"
                 />
               </label>
               <Button variant="secondary">Ver</Button>
@@ -118,26 +105,17 @@ export default async function RutasPage({
               <Link
                 href="?"
                 scroll={false}
-                className="text-sm text-neutral-500 hover:underline"
+                className="text-sm text-ink-muted hover:underline"
               >
                 Ver todas
               </Link>
             )}
-            <CreateModal
-              trigger="Agregar ruta"
-              title="Agregar ruta"
-              submitLabel="Crear ruta"
-              pendingLabel="Agregando…"
-              action={agregarParada}
-              contentClassName="max-w-2xl"
+            <Link
+              href="/rutas/nueva"
+              className="inline-flex items-center rounded-lg bg-ranko px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-ranko-dark"
             >
-              <AgregarRutaFields
-                fecha={fechaModalDefault}
-                tecnicos={tecnicos}
-                direcciones={direcciones}
-                tipos={tipos}
-              />
-            </CreateModal>
+              + Nueva ruta
+            </Link>
           </div>
         }
       >
@@ -150,19 +128,19 @@ export default async function RutasPage({
         {grupos.map((g) => (
           <section
             key={`${g.tecnico.id}-${g.fecha}`}
-            className="rounded-lg border border-neutral-200 bg-white"
+            className="overflow-hidden rounded-xl bg-surface hairline"
           >
-            <header className="relative flex items-center justify-between border-b border-neutral-200 px-4 py-3">
+            <header className="relative flex items-center justify-between px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)]">
               <div>
                 <Link
                   href={hrefTecnico(g.tecnico.id, g.fecha)}
                   scroll={false}
-                  className="font-semibold hover:underline"
+                  className="font-display font-bold text-ink hover:underline"
                 >
                   <span className="absolute inset-0" aria-hidden="true" />
                   {g.tecnico.nombre}
                 </Link>
-                <span className="ml-2 text-sm text-neutral-500">
+                <span className="ml-2 text-sm text-ink-muted">
                   {formatFecha(g.fecha)} · {g.visitas.length} visita
                   {g.visitas.length !== 1 && "s"}
                 </span>
@@ -179,16 +157,16 @@ export default async function RutasPage({
               {g.visitas.map((v) => (
                 <li
                   key={v.id}
-                  className="flex items-center justify-between border-b border-neutral-100 px-4 py-3 last:border-0"
+                  className="flex items-center justify-between px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none"
                 >
                   <div>
-                    <div className="text-sm font-medium">
+                    <div className="text-sm font-medium text-ink-2">
                       {v.direcciones.direccion}
-                      <span className="ml-2 text-neutral-500">
+                      <span className="ml-2 text-ink-muted">
                         {v.tipos_trabajo.nombre}
                       </span>
                     </div>
-                    <div className="text-xs text-neutral-500">
+                    <div className="text-xs text-ink-muted">
                       {v.direcciones.cliente}
                     </div>
                   </div>
@@ -230,17 +208,17 @@ export default async function RutasPage({
             <ol className="space-y-3">
               {paradasSeleccionadas.map((v, i) => (
                 <li key={v.id} className="flex gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold text-neutral-600">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-canvas text-xs font-semibold text-ink-muted hairline">
                     {i + 1}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-sm font-medium">
+                    <div className="text-sm font-medium text-ink-2">
                       {v.direcciones.direccion}
-                      <span className="ml-2 text-neutral-500">
+                      <span className="ml-2 text-ink-muted">
                         {v.tipos_trabajo.nombre}
                       </span>
                     </div>
-                    <div className="text-xs text-neutral-500">
+                    <div className="text-xs text-ink-muted">
                       {v.direcciones.cliente}
                     </div>
                     <div className="mt-1 flex items-center gap-2">
@@ -250,7 +228,7 @@ export default async function RutasPage({
                       />
                     </div>
                     {(v.iniciada_at || v.completada_at) && (
-                      <div className="mt-1 text-xs text-neutral-500">
+                      <div className="mt-1 text-xs text-ink-muted">
                         {v.iniciada_at && <>inició {formatHora(v.iniciada_at)}</>}
                         {v.iniciada_at && v.completada_at && " · "}
                         {v.completada_at && (
@@ -263,7 +241,7 @@ export default async function RutasPage({
               ))}
             </ol>
           ) : (
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm text-ink-muted">
               Sin paradas para este técnico.
             </p>
           )

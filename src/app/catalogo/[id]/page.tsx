@@ -118,7 +118,7 @@ export default async function ChecklistBuilderPage({
           <input type="checkbox" name="obligatorio" defaultChecked />
           Obligatorio
         </label>
-        <SubmitButton pendingText="Agregando…">Agregar ítem</SubmitButton>
+        <SubmitButton pendingText="Agregando…">+ Nuevo ítem</SubmitButton>
       </form>
     </div>
   );
