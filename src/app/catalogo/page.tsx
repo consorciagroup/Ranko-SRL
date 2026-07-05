@@ -65,8 +65,6 @@ export default async function CatalogoPage({
           </CreateModal>
         }
       >
-        Cada tipo de trabajo tiene su propio checklist. Entrá a uno para editar los
-        ítems que el técnico completa en campo.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">

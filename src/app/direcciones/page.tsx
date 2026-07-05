@@ -93,7 +93,6 @@ export default async function DireccionesPage({
           </CreateModal>
         }
       >
-        Clientes y ubicaciones donde se hacen las visitas.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
