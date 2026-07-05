@@ -9,13 +9,13 @@ export function SearchInput({
   placeholder?: string;
 }) {
   return (
-    <div className="flex h-10 w-64 items-center gap-2 rounded-md bg-surface px-3.5 hairline">
+    <div className="flex h-9 w-64 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 shadow-sm transition-colors focus-within:border-neutral-400">
       <svg
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
         strokeWidth={2}
-        className="h-4 w-4 shrink-0 text-ink-muted"
+        className="h-4 w-4 shrink-0 text-neutral-400"
         aria-hidden="true"
       >
         <path
@@ -25,11 +25,12 @@ export function SearchInput({
         />
       </svg>
       <input
-        type="search"
+        type="text"
         placeholder={placeholder}
         aria-label={placeholder}
-        // Pendiente de cablear: por ahora no dispara ninguna búsqueda.
-        className="w-full bg-transparent text-sm text-ink placeholder:text-ink-muted focus:outline-none"
+        autoFocus
+        className="w-full bg-transparent text-sm text-neutral-800 placeholder:text-neutral-400"
+        style={{ outline: "none" }}
       />
     </div>
   );

@@ -69,8 +69,6 @@ export default async function TecnicosPage({
           </CreateModal>
         }
       >
-        El teléfono tiene que ser el número de WhatsApp del técnico, con código de
-        país y sin espacios (ej: 5491122334455).
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">

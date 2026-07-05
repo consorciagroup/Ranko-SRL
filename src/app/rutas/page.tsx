@@ -119,8 +119,6 @@ export default async function RutasPage({
           </div>
         }
       >
-        Cada tipo de trabajo en una dirección genera una visita independiente con
-        su propio checklist. La ruta se puede armar el día anterior o el mismo día.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
