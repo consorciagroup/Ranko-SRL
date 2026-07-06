@@ -45,11 +45,9 @@ export default async function CatalogoPage({
     <div className="max-w-7xl">
       <PageHeader
         title="Tipos de trabajo"
-        search
-        searchPlaceholder="Buscar tipo de trabajo…"
         actions={
           <CreateModal
-            trigger="Agregar tipo de trabajo"
+            trigger="+ Nuevo trabajo"
             title="Agregar tipo de trabajo"
             submitLabel="Crear tipo de trabajo"
             pendingLabel="Creando…"
@@ -60,36 +58,34 @@ export default async function CatalogoPage({
               <input
                 name="nombre"
                 required
-                className="w-full rounded-md border border-hairline bg-surface px-3 py-2"
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
                 placeholder="Recarga de matafuegos"
               />
             </label>
           </CreateModal>
         }
       >
-        Cada tipo de trabajo tiene su propio checklist. Entrá a uno para editar los
-        ítems que el técnico completa en campo.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
       {tipos.length > 0 ? (
-        <div className="overflow-hidden rounded-xl bg-surface hairline">
+        <div className="rounded-lg border border-neutral-200 bg-white">
           {tipos.map((t) => (
             <div
               key={t.id}
-              className="relative flex items-center justify-between px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none hover:bg-canvas"
+              className="relative flex items-center justify-between border-b border-neutral-100 px-4 py-3 last:border-0"
             >
               <div>
                 <Link
                   href={`?trabajo=${t.id}`}
                   scroll={false}
-                  className="font-medium text-ink-2 hover:underline"
+                  className="font-medium hover:underline"
                 >
                   <span className="absolute inset-0" aria-hidden="true" />
                   {t.nombre}
                 </Link>
-                <div className="text-xs text-ink-muted">
+                <div className="text-xs text-neutral-500">
                   {conteo.get(t.id) ?? 0} ítems en el checklist
                 </div>
               </div>
@@ -120,12 +116,12 @@ export default async function CatalogoPage({
               <ol className="space-y-3">
                 {itemsTrabajo.map((item, i) => (
                   <li key={item.id} className="flex gap-3">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-canvas text-xs font-semibold text-ink-muted hairline">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs font-semibold text-neutral-600">
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="text-sm text-ink">{item.texto}</div>
-                      <div className="text-xs text-ink-muted">
+                      <div className="text-sm text-neutral-900">{item.texto}</div>
+                      <div className="text-xs text-neutral-500">
                         {TIPO_DATO_LABEL[item.tipo_dato]} ·{" "}
                         {item.obligatorio ? "Obligatorio" : "Opcional"}
                       </div>
@@ -134,13 +130,13 @@ export default async function CatalogoPage({
                 ))}
               </ol>
             ) : (
-              <p className="text-sm text-ink-muted">
+              <p className="text-sm text-neutral-500">
                 Este tipo de trabajo todavía no tiene ítems en el checklist.
               </p>
             )}
             <Link
               href={`/catalogo/${trabajoSeleccionado.id}`}
-              className="inline-block text-sm font-semibold text-ranko hover:underline"
+              className="inline-block text-sm text-ranko-dark hover:underline"
             >
               Editar checklist →
             </Link>

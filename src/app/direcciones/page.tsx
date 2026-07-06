@@ -56,11 +56,9 @@ export default async function DireccionesPage({
     <div className="max-w-7xl">
       <PageHeader
         title="Direcciones"
-        search
-        searchPlaceholder="Buscar dirección o cliente…"
         actions={
           <CreateModal
-            trigger="Agregar dirección"
+            trigger="+ Nueva dirección"
             title="Agregar dirección"
             submitLabel="Crear dirección"
             pendingLabel="Agregando…"
@@ -71,7 +69,7 @@ export default async function DireccionesPage({
               <input
                 name="direccion"
                 required
-                className="w-full rounded-md border border-hairline bg-surface px-3 py-2"
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
                 placeholder="Av. Corrientes 1234, CABA"
               />
             </label>
@@ -80,7 +78,7 @@ export default async function DireccionesPage({
               <input
                 name="cliente"
                 required
-                className="w-full rounded-md border border-hairline bg-surface px-3 py-2"
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
                 placeholder="Consorcio Corrientes 1234"
               />
             </label>
@@ -88,47 +86,46 @@ export default async function DireccionesPage({
               <span className="font-medium">Notas (opcional)</span>
               <input
                 name="notas"
-                className="w-full rounded-md border border-hairline bg-surface px-3 py-2"
+                className="w-full rounded-md border border-neutral-300 px-3 py-2"
                 placeholder="Encargado, accesos, etc."
               />
             </label>
           </CreateModal>
         }
       >
-        Clientes y ubicaciones donde se hacen las visitas.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <div className="overflow-hidden rounded-xl bg-surface hairline">
+      <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-xs uppercase tracking-wide text-ink-muted shadow-[inset_0_-1px_0_var(--color-hairline)]">
-            <th className="px-5 py-3.5 font-semibold">Dirección</th>
-            <th className="px-5 py-3.5 font-semibold">Cliente</th>
-            <th className="px-5 py-3.5 font-semibold">Notas</th>
-            <th className="w-24 px-5 py-3.5" />
+          <tr className="border-b border-neutral-200 text-left text-neutral-500">
+            <th className="px-4 py-3 font-medium">Dirección</th>
+            <th className="px-4 py-3 font-medium">Cliente</th>
+            <th className="px-4 py-3 font-medium">Notas</th>
+            <th className="w-24 px-4 py-3" />
           </tr>
         </thead>
         <tbody>
           {direcciones.map((d) => (
             <tr
               key={d.id}
-              className="relative shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none hover:bg-canvas"
+              className="relative border-b border-neutral-100 last:border-0 hover:bg-neutral-50"
             >
-              <td className="px-5 py-3.5">
+              <td className="px-4 py-3">
                 <Link
                   href={`?direccion=${d.id}`}
                   scroll={false}
-                  className="font-medium text-ink-2 hover:underline"
+                  className="font-medium hover:underline"
                 >
                   <span className="absolute inset-0" aria-hidden="true" />
                   {d.direccion}
                 </Link>
               </td>
-              <td className="px-5 py-3.5 text-ink-2">{d.cliente}</td>
-              <td className="px-5 py-3.5 text-ink-muted">{d.notas}</td>
-              <td className="relative z-10 px-5 py-3.5 text-right">
+              <td className="px-4 py-3">{d.cliente}</td>
+              <td className="px-4 py-3 text-neutral-500">{d.notas}</td>
+              <td className="relative z-10 px-4 py-3 text-right">
                 <ConfirmDeleteButton
                   action={eliminarDireccion}
                   id={d.id}
@@ -140,7 +137,7 @@ export default async function DireccionesPage({
           ))}
           {direcciones.length === 0 && (
             <tr>
-              <td colSpan={4} className="px-5 py-6 text-center text-ink-muted">
+              <td colSpan={4} className="px-4 py-6 text-center text-neutral-500">
                 Sin direcciones cargadas todavía.
               </td>
             </tr>
@@ -161,12 +158,12 @@ export default async function DireccionesPage({
               <Field label="Cliente">{direccionSeleccionada.cliente}</Field>
               <Field label="Notas">
                 {direccionSeleccionada.notas || (
-                  <span className="text-ink-muted">Sin notas</span>
+                  <span className="text-neutral-400">Sin notas</span>
                 )}
               </Field>
             </dl>
             <div>
-              <h3 className="text-xs font-medium text-ink-muted">
+              <h3 className="text-xs font-medium text-neutral-500">
                 Visitas recientes
               </h3>
               {visitasRecientes.length > 0 ? (
@@ -174,10 +171,10 @@ export default async function DireccionesPage({
                   {visitasRecientes.map((v) => (
                     <li key={v.id}>
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-sm font-medium text-ink">
+                        <span className="text-sm font-medium">
                           {formatFecha(v.fecha)}
                           {v.iniciada_at && (
-                            <span className="ml-1 font-normal text-ink-muted">
+                            <span className="ml-1 font-normal text-neutral-500">
                               · {formatHora(v.iniciada_at)}
                             </span>
                           )}
@@ -187,14 +184,14 @@ export default async function DireccionesPage({
                           conObservacion={v.con_observacion}
                         />
                       </div>
-                      <div className="text-xs text-ink-muted">
+                      <div className="text-xs text-neutral-500">
                         {v.tecnicos?.nombre ?? "—"} · {v.tipos_trabajo?.nombre ?? "—"}
                       </div>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="mt-2 text-sm text-ink-muted">
+                <p className="mt-2 text-sm text-neutral-500">
                   Sin visitas registradas en esta dirección.
                 </p>
               )}

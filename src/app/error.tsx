@@ -15,8 +15,8 @@ export default function Error({
 
   return (
     <div className="max-w-lg">
-      <h1 className="font-display text-2xl font-bold text-ink">Algo salió mal</h1>
-      <p className="mt-1 text-sm text-ink-muted">
+      <h1 className="text-2xl font-bold">Algo salió mal</h1>
+      <p className="mt-1 text-sm text-neutral-500">
         No se pudo cargar esta sección. Probá de nuevo; si el problema sigue,
         revisá la conexión con la base de datos.
       </p>

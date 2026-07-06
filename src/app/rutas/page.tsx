@@ -114,13 +114,11 @@ export default async function RutasPage({
               href="/rutas/nueva"
               className="inline-flex items-center rounded-lg bg-ranko px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-ranko-dark"
             >
-              Agregar ruta
+              + Nueva ruta
             </Link>
           </div>
         }
       >
-        Cada tipo de trabajo en una dirección genera una visita independiente con
-        su propio checklist. La ruta se puede armar el día anterior o el mismo día.
       </PageHeader>
 
       <div className="mt-6 flex items-start gap-6">
