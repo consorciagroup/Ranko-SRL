@@ -20,7 +20,7 @@ begin
     v_tipo_id,
     (elem->>'orden')::int,
     elem->>'texto',
-    elem->>'tipo_dato',
+    (elem->>'tipo_dato')::tipo_dato,
     (elem->>'obligatorio')::boolean
   from jsonb_array_elements(p_items) as elem;
 end;
