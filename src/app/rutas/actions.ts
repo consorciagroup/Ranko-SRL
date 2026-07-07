@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { enviarMenuParadas, hoyISO } from "@/lib/bot/menu";
+import { construirMenuParadas, enviarMenuParadas, hoyISO } from "@/lib/bot/menu";
+import { appendBandeja } from "@/lib/sim/bandeja";
 import type { ChecklistItem } from "@/lib/types";
 
 // Cada tipo de trabajo seleccionado genera una visita independiente, con el
@@ -108,11 +109,20 @@ export async function enviarRuta(formData: FormData) {
     .upsert({ tecnico_id: tecnicoId, estado: { paso: "menu" } });
   if (convError) throw new Error(convError.message);
 
-  await enviarMenuParadas(
-    tecnico.telefono,
-    tecnicoId,
-    fecha,
-    `Hola ${tecnico.nombre.split(" ")[0]} 👋 Te llegó la ruta del día.`
-  );
+  const saludo = `Hola ${tecnico.nombre.split(" ")[0]} 👋 Te llegó la ruta del día.`;
+
+  // Con la Cloud API configurada, va por WhatsApp real. Sin configurar (dev),
+  // la ruta se "entrega" en la bandeja del simulador del técnico (/simulador),
+  // así se prueba el loop completo sin teléfono.
+  if (process.env.WHATSAPP_ACCESS_TOKEN) {
+    await enviarMenuParadas(tecnico.telefono, tecnicoId, fecha, saludo);
+  } else {
+    await appendBandeja(
+      tecnicoId,
+      "bot",
+      await construirMenuParadas(tecnicoId, fecha, saludo)
+    );
+  }
+
   revalidatePath("/rutas");
 }
