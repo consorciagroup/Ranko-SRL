@@ -8,8 +8,10 @@ import { appendBandeja } from "@/lib/sim/bandeja";
 import type { ChecklistItem } from "@/lib/types";
 
 // Cada tipo de trabajo seleccionado genera una visita independiente, con el
-// checklist snapshoteado al momento de crearla.
-export async function agregarParada(formData: FormData) {
+// checklist snapshoteado al momento de crearla. Compartida por el wizard
+// (agregarParada, que redirige) y el modal de edición de ruta
+// (agregarDestinoARuta, que se queda en la página).
+async function crearVisitasDesdeForm(formData: FormData) {
   const fecha = String(formData.get("fecha") || hoyISO());
   const tecnicoId = String(formData.get("tecnico_id"));
   const direccionIds = formData.getAll("direcciones").map(String);
@@ -70,11 +72,46 @@ export async function agregarParada(formData: FormData) {
       if (snapError) throw new Error(snapError.message);
     }
   }
+}
 
+export async function agregarParada(formData: FormData) {
+  await crearVisitasDesdeForm(formData);
   revalidatePath("/rutas");
   // El wizard (/rutas/nueva) es el único que dispara esta action; al terminar
   // volvemos al listado, donde se ve la ruta armada y se envía por WhatsApp.
   redirect("/rutas");
+}
+
+// Usada desde el modal de edición de ruta (detalle de /rutas): agrega paradas
+// a una ruta ya existente sin salir de la página.
+export async function agregarDestinoARuta(formData: FormData) {
+  await crearVisitasDesdeForm(formData);
+  revalidatePath("/rutas");
+}
+
+// Persiste el nuevo orden de paradas de una ruta tras arrastrar y soltar en
+// el modal de edición.
+export async function reordenarVisitas(
+  tecnicoId: string,
+  fecha: string,
+  idsEnOrden: string[]
+) {
+  const db = supabaseAdmin();
+  const { error } = await Promise.all(
+    idsEnOrden.map((id, i) =>
+      db
+        .from("visitas")
+        .update({ orden: i + 1 })
+        .eq("id", id)
+        .eq("tecnico_id", tecnicoId)
+        .eq("fecha", fecha)
+    )
+  ).then((resultados) => {
+    const conError = resultados.find((r) => r.error);
+    return { error: conError?.error };
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/rutas");
 }
 
 export async function eliminarVisita(formData: FormData) {
