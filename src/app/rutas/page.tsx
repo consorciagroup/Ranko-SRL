@@ -140,8 +140,8 @@ export default async function RutasPage({
 
       <DetailPanel
         title={
-          tecnicoSeleccionado && rutaFecha
-            ? `Ruta de ${tecnicoSeleccionado.nombre} — ${formatFecha(rutaFecha)}`
+          tecnicoSeleccionado
+            ? `Ruta de ${tecnicoSeleccionado.nombre}`
             : undefined
         }
         closeHref={fechaFiltro ? `?fecha=${fechaFiltro}` : "?"}
@@ -175,16 +175,21 @@ export default async function RutasPage({
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
-                      <div>
+                      <div className="min-w-0 flex-1 space-y-0.5">
                         <div className="text-sm font-medium text-ink-2">
                           {v.direcciones.direccion}
-                          <span className="ml-2 text-ink-muted">
-                            {v.tipos_trabajo.nombre}
-                          </span>
+                        </div>
+                        <div className="text-xs text-ink-muted">
+                          {v.tipos_trabajo.nombre}
                         </div>
                         <div className="text-xs text-ink-muted">
                           {v.direcciones.cliente}
                         </div>
+                        {v.direcciones.notas && (
+                          <div className="text-xs text-ink-muted">
+                            {v.direcciones.notas}
+                          </div>
+                        )}
                       </div>
                       {v.estado === "asignada" && (
                         <form action={eliminarVisita}>
@@ -193,7 +198,7 @@ export default async function RutasPage({
                         </form>
                       )}
                     </div>
-                    <div className="mt-1 flex items-center gap-2">
+                    <div className="mt-1.5 flex items-center gap-2">
                       <EstadoBadge
                         estado={v.estado}
                         conObservacion={v.con_observacion}
