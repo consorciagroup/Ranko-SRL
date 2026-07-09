@@ -9,11 +9,10 @@ import { DeleteButton } from "@/components/ui/DeleteButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { DetailPanel } from "@/components/ui/DetailPanel";
 import { RutasFiltros } from "./RutasFiltros";
+import { agruparEnRutas } from "./agrupar";
 import { eliminarVisita, enviarRuta } from "./actions";
 
 export const dynamic = "force-dynamic";
-
-type Grupo = { tecnico: Tecnico; fecha: string; visitas: VisitaConRelaciones[] };
 
 export default async function RutasPage({
   searchParams,
@@ -46,24 +45,7 @@ export default async function RutasPage({
     porTecnico.set(v.tecnico_id, grupo);
   }
 
-  // Una tarjeta por técnico + fecha (un técnico con paradas en varios días
-  // aparece una vez por día), ordenadas cronológicamente: la más próxima primero.
-  const grupos: Grupo[] = [];
-  for (const t of tecnicos) {
-    const porFecha = new Map<string, VisitaConRelaciones[]>();
-    for (const v of porTecnico.get(t.id) ?? []) {
-      const arr = porFecha.get(v.fecha) ?? [];
-      arr.push(v);
-      porFecha.set(v.fecha, arr);
-    }
-    for (const [fecha, vs] of porFecha) {
-      grupos.push({ tecnico: t, fecha, visitas: vs });
-    }
-  }
-  grupos.sort(
-    (a, b) =>
-      a.fecha.localeCompare(b.fecha) || a.tecnico.nombre.localeCompare(b.tecnico.nombre)
-  );
+  const grupos = agruparEnRutas(tecnicos, visitas);
 
   const tecnicoSeleccionado = tecnicoId
     ? tecnicos.find((t) => t.id === tecnicoId)

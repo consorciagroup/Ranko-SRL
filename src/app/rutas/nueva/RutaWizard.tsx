@@ -7,6 +7,7 @@ import { SubmitButton } from "@/components/ui/SubmitButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { formatFecha } from "@/lib/format";
 import type { Direccion, Tecnico, TipoTrabajo } from "@/lib/types";
+import { calcularProgresoWizard } from "./wizard-logic";
 import { agregarParada } from "../actions";
 
 const PASOS = ["Técnico", "Direcciones", "Tipos de trabajo", "Revisión"];
@@ -50,19 +51,12 @@ export function RutaWizard({
       return { ...prev, [dirId]: next };
     });
 
-  const totalVisitas = dirIds.reduce(
-    (n, id) => n + (tiposPorDir[id]?.length ?? 0),
-    0
-  );
-
-  const canContinue =
-    step === 1
-      ? !!tecnicoId
-      : step === 2
-        ? dirIds.length > 0
-        : step === 3
-          ? dirIds.every((id) => (tiposPorDir[id]?.length ?? 0) > 0)
-          : true;
+  const { totalVisitas, canContinue } = calcularProgresoWizard({
+    step,
+    tecnicoId,
+    dirIds,
+    tiposPorDir,
+  });
 
   return (
     <div className="flex flex-1 flex-col gap-6">

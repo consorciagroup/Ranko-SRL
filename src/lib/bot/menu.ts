@@ -28,6 +28,31 @@ export async function visitasPendientesDe(
   return (data ?? []) as VisitaConRelaciones[];
 }
 
+// Fila de la lista interactiva de WhatsApp: una parada (dirección) con los
+// trabajos pendientes de esa dirección concatenados en la descripción.
+export interface FilaParada {
+  id: string;
+  title: string;
+  description: string;
+}
+
+// Agrupa las visitas por dirección y arma las filas del menú de paradas. La
+// lista interactiva de WhatsApp admite hasta 10 filas, así que se trunca a 10.
+export function agruparEnParadas(visitas: VisitaConRelaciones[]): FilaParada[] {
+  const paradas = new Map<string, VisitaConRelaciones[]>();
+  for (const v of visitas) {
+    const grupo = paradas.get(v.direccion_id) ?? [];
+    grupo.push(v);
+    paradas.set(v.direccion_id, grupo);
+  }
+
+  return [...paradas.entries()].slice(0, 10).map(([direccionId, grupo]) => ({
+    id: `parada:${direccionId}`,
+    title: grupo[0].direcciones.direccion,
+    description: grupo.map((v) => v.tipos_trabajo.nombre).join(" + "),
+  }));
+}
+
 // Menú de paradas: una fila por dirección (la "parada" es agrupación visual;
 // los trabajos de esa dirección se eligen en el paso siguiente).
 export async function enviarMenuParadas(
@@ -46,22 +71,12 @@ export async function enviarMenuParadas(
     return;
   }
 
-  const paradas = new Map<string, VisitaConRelaciones[]>();
-  for (const v of visitas) {
-    const grupo = paradas.get(v.direccion_id) ?? [];
-    grupo.push(v);
-    paradas.set(v.direccion_id, grupo);
-  }
-
-  // La lista interactiva de WhatsApp admite hasta 10 filas
-  const filas = [...paradas.entries()].slice(0, 10).map(([direccionId, grupo]) => ({
-    id: `parada:${direccionId}`,
-    title: grupo[0].direcciones.direccion,
-    description: grupo.map((v) => v.tipos_trabajo.nombre).join(" + "),
-  }));
+  const filas = agruparEnParadas(visitas);
+  // Cantidad de paradas distintas (sin truncar), para el encabezado del menú.
+  const cantidadParadas = new Set(visitas.map((v) => v.direccion_id)).size;
 
   const body =
-    (encabezado ?? `Estas son tus paradas pendientes (${paradas.size}):`) +
+    (encabezado ?? `Estas son tus paradas pendientes (${cantidadParadas}):`) +
     "\n\nElegí por cuál seguir — el orden lo manejás vos.";
 
   await sendList(telefono, {

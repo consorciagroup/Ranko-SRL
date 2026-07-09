@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ ok: true });
 }
 
-function firmaValida(raw: string, header: string | null): boolean {
+export function firmaValida(raw: string, header: string | null): boolean {
   const secret = process.env.WHATSAPP_APP_SECRET;
   // Sin secreto configurado (dev local) no validamos firma.
   // En producción esto es un agujero de seguridad: avisamos por log.
@@ -107,7 +107,7 @@ interface MetaWebhookBody {
   }[];
 }
 
-function extraerMensajes(body: MetaWebhookBody): MensajeEntrante[] {
+export function extraerMensajes(body: MetaWebhookBody): MensajeEntrante[] {
   const mensajes: MensajeEntrante[] = [];
   for (const entry of body.entry ?? []) {
     for (const change of entry.changes ?? []) {
