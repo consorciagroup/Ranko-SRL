@@ -91,13 +91,13 @@ export default async function RutasPage({
       <div className="min-w-0 flex-1">
       {/* Rutas por técnico y fecha, todas juntas en un mismo listado */}
       {grupos.length > 0 ? (
-        <div className="overflow-hidden rounded-xl bg-surface hairline">
+        <div className="grid grid-cols-[max-content_max-content_1fr] overflow-hidden rounded-xl bg-surface hairline">
           {grupos.map((g) => (
             <div
               key={`${g.tecnico.id}-${g.fecha}`}
-              className="relative flex items-center justify-between px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none hover:bg-black/[0.02]"
+              className="relative col-span-3 grid grid-cols-subgrid items-center px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none hover:bg-black/[0.02]"
             >
-              <div>
+              <div className="whitespace-nowrap">
                 <Link
                   href={hrefTecnico(g.tecnico.id, g.fecha)}
                   scroll={false}
@@ -106,11 +106,11 @@ export default async function RutasPage({
                   <span className="absolute inset-0" aria-hidden="true" />
                   {g.tecnico.nombre}
                 </Link>
-                <span className="ml-2 text-sm text-ink-muted">
-                  {formatFecha(g.fecha)} 
-                </span>
               </div>
-              <div className="relative z-10 flex items-center gap-3">
+              <div className="whitespace-nowrap pl-2 text-sm text-ink-muted">
+                {formatFecha(g.fecha)}
+              </div>
+              <div className="relative z-10 flex items-center justify-end gap-3">
                 <Link
                   href={`/simulador/${g.tecnico.id}`}
                   target="_blank"
