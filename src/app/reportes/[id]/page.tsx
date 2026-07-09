@@ -119,7 +119,7 @@ export default async function ReporteDetallePage({
   );
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="max-w-7xl">
       {/* Barra de acciones (fuera de la hoja) */}
       <div className="mb-4 flex items-center justify-between">
         <Link
