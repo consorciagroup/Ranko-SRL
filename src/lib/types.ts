@@ -121,3 +121,33 @@ export const TIPO_DATO_LABEL: Record<TipoDato, string> = {
   foto: "Foto",
   numero: "Medición numérica",
 };
+
+// ---- Reportes (compilación de visitas de una dirección en un período) ----
+
+export type EstadoReporte = "borrador" | "finalizado";
+
+export interface Reporte {
+  id: string;
+  direccion_id: string;
+  titulo: string;
+  periodo_desde: string;
+  periodo_hasta: string;
+  // Texto manual por ahora; más adelante lo redacta la IA.
+  resumen: string | null;
+  cierre: string | null;
+  estado: EstadoReporte;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ReporteVisita {
+  id: string;
+  reporte_id: string;
+  visita_id: string;
+  orden: number;
+}
+
+export const ESTADO_REPORTE_LABEL: Record<EstadoReporte, string> = {
+  borrador: "Borrador",
+  finalizado: "Finalizado",
+};
