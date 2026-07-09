@@ -50,7 +50,7 @@ export default async function TecnicosPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1400px]">
+    <div className="max-w-7xl">
       <PageHeader
         title="Técnicos"
         bell
