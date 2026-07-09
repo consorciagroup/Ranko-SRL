@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { formatFecha, formatHora } from "@/lib/format";
-import type { Direccion, TipoTrabajo, Tecnico, Visita } from "@/lib/types";
+import type { Direccion, TipoTrabajo, Tecnico, Visita, Reporte } from "@/lib/types";
+import { ESTADO_REPORTE_LABEL } from "@/lib/types";
 import { EstadoBadge } from "@/components/EstadoBadge";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
@@ -29,6 +30,15 @@ export default async function ReportesPage({
   const { fecha: fechaFiltro, visita: visitaId } = await searchParams;
 
   const db = supabaseAdmin();
+
+  const { data: reportesData } = await db
+    .from("reportes")
+    .select("*, direcciones(*)")
+    .order("created_at", { ascending: false });
+  const reportesGenerados = (reportesData ?? []) as (Reporte & {
+    direcciones: Direccion;
+  })[];
+
   let query = db
     .from("visitas")
     .select("*, direcciones(*), tipos_trabajo(*), tecnicos(*)")
@@ -53,18 +63,57 @@ export default async function ReportesPage({
         title="Reportes"
         bell
         actions={
-          // TODO(cablear): "Nuevo reporte" es decorativo — hoy los reportes
-          // los genera el bot de WhatsApp, no se crean desde el panel. Definir
-          // qué flujo dispara este botón (o quitarlo) cuando se decida.
-          <Button title="Pendiente de cablear">+ Nuevo reporte</Button>
+          <Link href="/reportes/nuevo">
+            <Button>+ Nuevo reporte</Button>
+          </Link>
         }
       >
       </PageHeader>
 
-      <ReportesFiltros
-        fecha={fechaFiltro}
-        searchPlaceholder="Buscar reporte, cliente o técnico…"
-      />
+      {reportesGenerados.length > 0 && (
+        <section className="mt-2">
+          <div className="grid gap-3">
+            {reportesGenerados.map((r) => {
+              const rango =
+                r.periodo_desde === r.periodo_hasta
+                  ? formatFecha(r.periodo_desde)
+                  : `${formatFecha(r.periodo_desde)} — ${formatFecha(r.periodo_hasta)}`;
+              return (
+                <Link
+                  key={r.id}
+                  href={`/reportes/${r.id}`}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-surface px-5 py-4 hairline transition-colors hover:bg-black/[0.02]"
+                >
+                  <div className="min-w-0">
+                    <div className="font-display font-bold text-ink">
+                      {r.titulo}
+                      <span className="ml-2 font-normal text-ink-muted">
+                        {r.direcciones.direccion}
+                      </span>
+                    </div>
+                    <div className="text-sm text-ink-muted">
+                      {r.direcciones.cliente} · {rango}
+                    </div>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-canvas px-2.5 py-1 text-xs font-semibold text-ink-2 hairline">
+                    {ESTADO_REPORTE_LABEL[r.estado]}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      <div className="mt-8">
+        <h2 className="mb-3 font-display text-lg font-bold text-ink">
+          Trabajos cerrados
+        </h2>
+        <ReportesFiltros
+          fecha={fechaFiltro}
+          searchPlaceholder="Buscar trabajo, cliente o técnico…"
+        />
+      </div>
 
       <div className="mt-6 flex items-start gap-6">
         <div className="min-w-0 flex-1">
