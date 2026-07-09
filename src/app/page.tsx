@@ -22,7 +22,7 @@ export default async function DashboardPage() {
   if (visitasRes.error) throw new Error(visitasRes.error.message);
 
   return (
-    <div className="mx-auto max-w-[1400px]">
+    <div className="mx-auto flex w-full min-h-0 flex-1 flex-col max-w-[1400px]">
       <PageHeader
         title="Visitas de hoy"
         search

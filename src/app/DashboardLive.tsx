@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { EstadoBadge } from "@/components/EstadoBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -78,7 +77,7 @@ export function DashboardLive({
   const tecnicosConVisitas = tecnicos.filter((t) => porTecnico.has(t.id));
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-h-0 flex-1 flex-col gap-6">
       <div className="flex items-center gap-2 text-xs text-ink-muted">
         <span
           className={`inline-block h-2 w-2 rounded-full ${
@@ -99,8 +98,8 @@ export function DashboardLive({
         />
       </div>
 
-      <div className="flex flex-col gap-5 lg:flex-row">
-        <section className="flex flex-1 flex-col gap-4 rounded-xl bg-surface p-5 hairline">
+      <div className="flex min-h-0 flex-1 flex-col gap-5 lg:flex-row">
+        <section className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-xl bg-surface p-5 hairline">
           <h2 className="font-display text-lg font-bold text-ink">
             Visitas de hoy por técnico
           </h2>
@@ -142,9 +141,9 @@ export function DashboardLive({
           ))}
         </section>
 
-        <aside className="flex w-full flex-col gap-4 lg:w-80 lg:shrink-0">
+        <aside className="flex min-h-0 w-full flex-col gap-4 lg:w-80 lg:shrink-0">
           <div
-            className={`flex flex-col gap-3 rounded-xl bg-surface p-5 ${
+            className={`flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto rounded-xl bg-surface p-5 ${
               totalAlertas > 0
                 ? "shadow-[inset_0_0_0_1px_var(--color-ranko)]"
                 : "hairline"
@@ -178,15 +177,6 @@ export function DashboardLive({
               />
             ))}
           </div>
-
-          <div className="flex flex-col gap-2.5 rounded-xl bg-surface p-5 hairline">
-            <h2 className="font-display text-lg font-bold text-ink">
-              Accesos rápidos
-            </h2>
-            <QuickLink href="/rutas" label="Armar una ruta" />
-            <QuickLink href="/tecnicos" label="Ver técnicos" />
-            <QuickLink href="/direcciones" label="Ver direcciones" />
-          </div>
         </aside>
       </div>
     </div>
@@ -206,13 +196,3 @@ function AlertRow({ tono, texto }: { tono: "danger" | "warning"; texto: string }
   );
 }
 
-function QuickLink({ href, label }: { href: string; label: string }) {
-  return (
-    <Link
-      href={href}
-      className="rounded-md bg-canvas px-3 py-2.5 text-sm font-medium text-ink-2 hairline hover:bg-black/[0.03]"
-    >
-      {label} →
-    </Link>
-  );
-}
