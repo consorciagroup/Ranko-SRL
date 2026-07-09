@@ -7,16 +7,10 @@ import { CreateModal } from "@/components/ui/CreateModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { TechCard } from "@/components/ui/TechCard";
 import type { Tecnico } from "@/lib/types";
+import { calcularStatsTecnicos, type VisitaStat } from "./stats";
 import { crearTecnico, eliminarTecnico } from "./actions";
 
 export const dynamic = "force-dynamic";
-
-// Forma local del join que alimenta los KPIs de cada tarjeta.
-type VisitaStat = {
-  tecnico_id: string;
-  fecha: string;
-  direcciones: { cliente: string } | null;
-};
 
 export default async function TecnicosPage() {
   const hoy = hoyISO();
@@ -36,18 +30,7 @@ export default async function TecnicosPage() {
   const tecnicos = (data ?? []) as Tecnico[];
   const visitas = (visitasRes.data ?? []) as unknown as VisitaStat[];
 
-  const stats = new Map<
-    string,
-    { mes: number; ultimo: { fecha: string; cliente: string } | null }
-  >();
-  for (const v of visitas) {
-    const s = stats.get(v.tecnico_id) ?? { mes: 0, ultimo: null };
-    if (v.fecha.slice(0, 7) === mesActual) s.mes += 1;
-    if (!s.ultimo) {
-      s.ultimo = { fecha: v.fecha, cliente: v.direcciones?.cliente ?? "—" };
-    }
-    stats.set(v.tecnico_id, s);
-  }
+  const stats = calcularStatsTecnicos(visitas, mesActual);
 
   return (
     <div className="max-w-7xl">

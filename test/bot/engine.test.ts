@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { procesarMensaje } from "./engine";
-import type { BotDeps, MensajeEntrante } from "./engine";
+import { procesarMensaje } from "@/lib/bot/engine";
+import type { BotDeps, MensajeEntrante } from "@/lib/bot/engine";
 import type {
   EstadoConversacion,
   Tecnico,
   VisitaItem,
 } from "@/lib/types";
-import type { VisitaConRelaciones } from "./menu";
+import type { VisitaConRelaciones } from "@/lib/bot/menu";
 
 // ---- Deps falsas en memoria ----
 

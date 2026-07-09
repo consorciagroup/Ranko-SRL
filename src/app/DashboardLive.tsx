@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { StatCard } from "@/components/ui/StatCard";
 import { Avatar } from "@/components/ui/Avatar";
 import { formatHora } from "@/lib/format";
+import { calcularEstadoDashboard } from "@/app/dashboard-stats";
 import type { Tecnico, VisitaConRelaciones } from "@/lib/types";
 
 // Dashboard del día: recibe los datos iniciales del server y se mantiene en vivo
@@ -51,30 +52,16 @@ export function DashboardLive({
     };
   }, [fecha]);
 
-  const porTecnico = new Map<string, VisitaConRelaciones[]>();
-  for (const v of visitas) {
-    const grupo = porTecnico.get(v.tecnico_id) ?? [];
-    grupo.push(v);
-    porTecnico.set(v.tecnico_id, grupo);
-  }
+  const {
+    porTecnico,
+    tecnicosConVisitas,
+    totales,
+    atrasadas,
+    conObservacion,
+    sinAcceso,
+    totalAlertas,
+  } = calcularEstadoDashboard(visitas, tecnicos);
   const nombreTecnico = new Map(tecnicos.map((t) => [t.id, t.nombre]));
-
-  const totales = {
-    total: visitas.length,
-    completadas: visitas.filter((v) =>
-      ["completada", "en_revision", "aprobada"].includes(v.estado)
-    ).length,
-    enCurso: visitas.filter((v) => v.estado === "en_curso").length,
-    sinAcceso: visitas.filter((v) => v.estado === "sin_acceso").length,
-  };
-
-  // Alertas: asignadas sin iniciar (atraso) + con observación + sin acceso.
-  const atrasadas = visitas.filter((v) => v.estado === "asignada" && !v.iniciada_at);
-  const conObservacion = visitas.filter((v) => v.con_observacion);
-  const sinAcceso = visitas.filter((v) => v.estado === "sin_acceso");
-  const totalAlertas = atrasadas.length + conObservacion.length + sinAcceso.length;
-
-  const tecnicosConVisitas = tecnicos.filter((t) => porTecnico.has(t.id));
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-6">
