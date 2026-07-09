@@ -4,11 +4,11 @@ import { formatFecha, formatHora } from "@/lib/format";
 import type { Tecnico, VisitaConRelaciones } from "@/lib/types";
 import { EstadoBadge } from "@/components/EstadoBadge";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Button } from "@/components/ui/Button";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { DeleteButton } from "@/components/ui/DeleteButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { DetailPanel } from "@/components/ui/DetailPanel";
+import { RutasFiltros } from "./RutasFiltros";
 import { eliminarVisita, enviarRuta } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -83,43 +83,22 @@ export default async function RutasPage({
     <div className="max-w-7xl">
       <PageHeader
         title="Rutas"
-        search
-        searchPlaceholder="Buscar técnico o cliente…"
+        bell
         actions={
-          <div className="flex items-end gap-3">
-            <form method="get" className="flex items-end gap-2 text-sm">
-              <label htmlFor="fecha" className="flex flex-col gap-1">
-                <span className="text-ink-muted">Día</span>
-                <input
-                  id="fecha"
-                  type="date"
-                  name="fecha"
-                  key={fechaFiltro ?? "todas"}
-                  defaultValue={fechaFiltro}
-                  className="rounded-md border border-hairline bg-surface px-3 py-2"
-                />
-              </label>
-              <Button variant="secondary">Ver</Button>
-            </form>
-            {fechaFiltro && (
-              <Link
-                href="?"
-                scroll={false}
-                className="text-sm text-ink-muted hover:underline"
-              >
-                Ver todas
-              </Link>
-            )}
-            <Link
-              href="/rutas/nueva"
-              className="inline-flex items-center rounded-lg bg-ranko px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-ranko-dark"
-            >
-              + Nueva ruta
-            </Link>
-          </div>
+          <Link
+            href="/rutas/nueva"
+            className="inline-flex items-center rounded-lg bg-ranko px-5 py-2.5 text-base font-semibold text-white transition-colors hover:bg-ranko-dark"
+          >
+            + Nueva ruta
+          </Link>
         }
       >
       </PageHeader>
+
+      <RutasFiltros
+        fecha={fechaFiltro}
+        searchPlaceholder="Buscar técnico o cliente…"
+      />
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">

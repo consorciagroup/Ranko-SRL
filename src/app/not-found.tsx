@@ -11,7 +11,7 @@ export default function NotFound() {
         href="/"
         className="mt-4 inline-block text-sm text-ranko-dark hover:underline"
       >
-        ← Volver al dashboard
+        ← Volver a Inicio
       </Link>
     </div>
   );

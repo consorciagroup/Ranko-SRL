@@ -11,12 +11,14 @@ export function PageHeader({
   children,
   actions,
   search = false,
+  bell = search,
   searchPlaceholder,
 }: {
   title: string;
   children?: React.ReactNode;
   actions?: React.ReactNode;
   search?: boolean;
+  bell?: boolean;
   searchPlaceholder?: string;
 }) {
   return (
@@ -29,10 +31,10 @@ export function PageHeader({
           <p className="mt-2 max-w-2xl text-base text-ink-muted">{children}</p>
         )}
       </div>
-      {(search || actions) && (
+      {(search || bell || actions) && (
         <div className="flex shrink-0 items-center gap-3">
           {search && <SearchInput placeholder={searchPlaceholder} />}
-          {search && <NotificationBell />}
+          {bell && <NotificationBell />}
           {actions}
         </div>
       )}

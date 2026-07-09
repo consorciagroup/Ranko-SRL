@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 
 // Todo a un mismo nivel, siempre visible en el sidebar.
 const PRINCIPAL = [
-  { href: "/", label: "Dashboard" },
+  { href: "/", label: "Inicio" },
+  { href: "/reportes", label: "Reportes" },
   { href: "/rutas", label: "Rutas" },
   { href: "/catalogo", label: "Trabajos" },
   { href: "/direcciones", label: "Direcciones" },

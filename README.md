@@ -5,7 +5,8 @@ incendios). Dos interfaces:
 ---
 
 - **Panel de logística** (web): armado de rutas diarias, catálogo de tipos de
-  trabajo con constructor de checklists, dashboard del día en tiempo real.
+  trabajo con constructor de checklists, pantalla de Inicio con el día en
+  tiempo real.
 - **Bot de WhatsApp** (Meta Cloud API oficial): el técnico recibe sus paradas en
   un menú, elige el orden libremente y completa cada checklist guiado ítem por
   ítem (sí/no, texto, foto, medición), con evidencia en Supabase Storage.
@@ -19,7 +20,7 @@ Cloud API. Deploy en Vercel.
 
 ```
 WhatsApp ⇄ /api/whatsapp/webhook ⇄ máquina de estados (src/lib/bot) ⇄ Supabase
-                     Panel logística (src/app/*) ⇄ Supabase (+ Realtime en dashboard)
+                     Panel logística (src/app/*) ⇄ Supabase (+ Realtime en Inicio)
 ```
 
 - El bot es una máquina de estados **persistida en DB** (tabla `conversaciones`)
@@ -51,6 +52,6 @@ supabase/migrations/   modelo de datos (aplicar con `supabase db push`)
 supabase/seed.sql      datos de ejemplo para la demo
 src/lib/whatsapp.ts    wrapper de la Meta Cloud API
 src/lib/bot/           máquina de estados del bot + menú de paradas
-src/app/               panel de logística (dashboard, rutas, catálogo, ABMs)
+src/app/               panel de logística (Inicio, rutas, catálogo, ABMs)
 src/app/api/whatsapp/  webhook de mensajes entrantes
 ```
