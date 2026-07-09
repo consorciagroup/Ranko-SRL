@@ -50,12 +50,6 @@ export default function RootLayout({
                   priority
                 />
               </div>
-              <div className="flex items-center gap-2 pl-0.5">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ranko" />
-                <span className="text-[0.65rem] font-semibold uppercase leading-tight tracking-[0.12em] text-sidebar-muted">
-                  Panel de logística
-                </span>
-              </div>
             </div>
 
             <SidebarNav />

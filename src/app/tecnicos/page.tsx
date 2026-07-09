@@ -2,6 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 import { hoyISO } from "@/lib/bot/menu";
 import { fechaRelativa } from "@/lib/format";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { SearchInput } from "@/components/ui/SearchInput";
 import { CreateModal } from "@/components/ui/CreateModal";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { TechCard } from "@/components/ui/TechCard";
@@ -52,8 +53,7 @@ export default async function TecnicosPage() {
     <div className="mx-auto max-w-[1400px]">
       <PageHeader
         title="Técnicos"
-        search
-        searchPlaceholder="Buscar técnico…"
+        bell
         actions={
           <CreateModal
             trigger="Agregar técnico"
@@ -83,10 +83,11 @@ export default async function TecnicosPage() {
           </CreateModal>
         }
       >
-        Equipo de mantenimiento y su actividad. El teléfono tiene que ser el número
-        de WhatsApp del técnico, con código de país y sin espacios (ej:
-        5491122334455).
       </PageHeader>
+
+      <div className="mb-6">
+        <SearchInput placeholder="Buscar técnico…" />
+      </div>
 
       {tecnicos.length > 0 ? (
         <div className="grid gap-4 lg:grid-cols-2">
