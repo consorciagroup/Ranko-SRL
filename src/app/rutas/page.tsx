@@ -89,14 +89,14 @@ export default async function RutasPage({
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      {/* Rutas por técnico y fecha */}
-      <div className="grid gap-6">
-        {grupos.map((g) => (
-          <section
-            key={`${g.tecnico.id}-${g.fecha}`}
-            className="overflow-hidden rounded-xl bg-surface hairline"
-          >
-            <header className="relative flex items-center justify-between px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)]">
+      {/* Rutas por técnico y fecha, todas juntas en un mismo listado */}
+      {grupos.length > 0 ? (
+        <div className="overflow-hidden rounded-xl bg-surface hairline">
+          {grupos.map((g) => (
+            <div
+              key={`${g.tecnico.id}-${g.fecha}`}
+              className="relative flex items-center justify-between px-5 py-3.5 shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none hover:bg-black/[0.02]"
+            >
               <div>
                 <Link
                   href={hrefTecnico(g.tecnico.id, g.fecha)}
@@ -107,8 +107,7 @@ export default async function RutasPage({
                   {g.tecnico.nombre}
                 </Link>
                 <span className="ml-2 text-sm text-ink-muted">
-                  {formatFecha(g.fecha)} · {g.visitas.length} visita
-                  {g.visitas.length !== 1 && "s"}
+                  {formatFecha(g.fecha)} 
                 </span>
               </div>
               <div className="relative z-10 flex items-center gap-3">
@@ -127,17 +126,16 @@ export default async function RutasPage({
                   </SubmitButton>
                 </form>
               </div>
-            </header>
-          </section>
-        ))}
-        {grupos.length === 0 && (
-          <EmptyState>
-            {fechaFiltro
-              ? `Sin visitas para el ${formatFecha(fechaFiltro)}. Agregá la primera parada arriba.`
-              : "Sin visitas cargadas todavía. Agregá la primera parada arriba."}
-          </EmptyState>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <EmptyState>
+          {fechaFiltro
+            ? `Sin visitas para el ${formatFecha(fechaFiltro)}. Agregá la primera parada arriba.`
+            : "Sin visitas cargadas todavía. Agregá la primera parada arriba."}
+        </EmptyState>
+      )}
       </div>
 
       <DetailPanel
