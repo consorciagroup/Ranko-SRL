@@ -1,6 +1,6 @@
 // ⚠️ TODO(cablear): buscador VISUAL del panel. Hoy NO filtra nada — es un
 // control decorativo para igualar el diseño. Falta cablear la búsqueda real
-// (por reporte / cliente / técnico) donde se use: Dashboard, Rutas, Técnicos,
+// (por reporte / cliente / técnico) donde se use: Inicio, Rutas, Técnicos,
 // Direcciones y Catálogo. Cuando se cablee, convertir en client component con
 // estado + debounce y filtrar el listado correspondiente.
 export function SearchInput({
