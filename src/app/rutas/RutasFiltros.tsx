@@ -20,7 +20,6 @@ export function RutasFiltros({
     <div className="flex flex-wrap items-end gap-3">
       <SearchInput placeholder={searchPlaceholder} />
       <label htmlFor="fecha" className="flex flex-col gap-1 text-sm">
-        <span className="text-ink-muted">Día</span>
         <input
           id="fecha"
           type="date"
@@ -31,7 +30,7 @@ export function RutasFiltros({
             const value = e.target.value;
             router.push(value ? `?fecha=${value}` : "?");
           }}
-          className="rounded-md border border-hairline bg-surface px-3 py-2"
+          className="rounded-md border border-hairline bg-surface px-3 py-2 shadow-sm"
         />
       </label>
       {fecha && (
