@@ -39,7 +39,7 @@ export default async function TecnicosPage() {
         bell
         actions={
           <CreateModal
-            trigger="Agregar técnico"
+            trigger="+ Nuevo técnico"
             title="Agregar técnico"
             submitLabel="Crear técnico"
             pendingLabel="Agregando…"
