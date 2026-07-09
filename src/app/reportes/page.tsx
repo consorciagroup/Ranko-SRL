@@ -72,7 +72,7 @@ export default async function ReportesPage({
 
       {reportesGenerados.length > 0 && (
         <section className="mt-2">
-          <div className="grid gap-3">
+          <div className="overflow-hidden rounded-xl bg-surface hairline">
             {reportesGenerados.map((r) => {
               const rango =
                 r.periodo_desde === r.periodo_hasta
@@ -82,7 +82,7 @@ export default async function ReportesPage({
                 <Link
                   key={r.id}
                   href={`/reportes/${r.id}`}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-surface px-5 py-4 hairline transition-colors hover:bg-black/[0.02]"
+                  className="flex items-center justify-between gap-3 px-5 py-4 shadow-[inset_0_-1px_0_var(--color-hairline)] transition-colors last:shadow-none hover:bg-black/[0.02]"
                 >
                   <div className="min-w-0">
                     <div className="font-display font-bold text-ink">
@@ -117,41 +117,42 @@ export default async function ReportesPage({
 
       <div className="mt-6 flex items-start gap-6">
         <div className="min-w-0 flex-1">
-          <div className="grid gap-4">
-            {reportes.map((r) => (
-              <article
-                key={r.id}
-                className="relative flex items-center justify-between rounded-xl bg-surface px-5 py-4 hairline"
-              >
-                <div className="min-w-0">
-                  <Link
-                    href={hrefReporte(r.id)}
-                    scroll={false}
-                    className="font-display font-bold text-ink hover:underline"
-                  >
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    {r.direcciones.cliente}
-                    <span className="ml-2 font-normal text-ink-muted">
-                      {r.tipos_trabajo.nombre}
-                    </span>
-                  </Link>
-                  <div className="text-sm text-ink-muted">
-                    {r.tecnicos.nombre} · {formatFecha(r.fecha)}
+          {reportes.length > 0 ? (
+            <div className="overflow-hidden rounded-xl bg-surface hairline">
+              {reportes.map((r) => (
+                <div
+                  key={r.id}
+                  className="relative flex items-center justify-between px-5 py-4 shadow-[inset_0_-1px_0_var(--color-hairline)] last:shadow-none hover:bg-black/[0.02]"
+                >
+                  <div className="min-w-0">
+                    <Link
+                      href={hrefReporte(r.id)}
+                      scroll={false}
+                      className="font-display font-bold text-ink hover:underline"
+                    >
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      {r.direcciones.cliente}
+                      <span className="ml-2 font-normal text-ink-muted">
+                        {r.tipos_trabajo.nombre}
+                      </span>
+                    </Link>
+                    <div className="text-sm text-ink-muted">
+                      {r.tecnicos.nombre} · {formatFecha(r.fecha)}
+                    </div>
+                  </div>
+                  <div className="relative z-10 flex items-center gap-3">
+                    <EstadoBadge estado={r.estado} conObservacion={r.con_observacion} />
                   </div>
                 </div>
-                <div className="relative z-10 flex items-center gap-3">
-                  <EstadoBadge estado={r.estado} conObservacion={r.con_observacion} />
-                </div>
-              </article>
-            ))}
-            {reportes.length === 0 && (
-              <EmptyState>
-                {fechaFiltro
-                  ? `Sin reportes cerrados para el ${formatFecha(fechaFiltro)}.`
-                  : "Sin reportes cerrados todavía. Los reportes se generan cuando un técnico completa una visita desde WhatsApp."}
-              </EmptyState>
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState>
+              {fechaFiltro
+                ? `Sin reportes cerrados para el ${formatFecha(fechaFiltro)}.`
+                : "Sin reportes cerrados todavía. Los reportes se generan cuando un técnico completa una visita desde WhatsApp."}
+            </EmptyState>
+          )}
         </div>
 
         <DetailPanel
