@@ -1,6 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { sendList, sendText } from "@/lib/whatsapp";
 import type { VisitaConRelaciones } from "@/lib/types";
+import type { MensajeSalida } from "./salida";
 
 // Tipo canónico definido en @/lib/types; se re-exporta acá para no romper los
 // imports existentes del bot (`from "./menu"`).
@@ -29,21 +30,21 @@ export async function visitasPendientesDe(
 }
 
 // Menú de paradas: una fila por dirección (la "parada" es agrupación visual;
-// los trabajos de esa dirección se eligen en el paso siguiente).
-export async function enviarMenuParadas(
-  telefono: string,
+// los trabajos de esa dirección se eligen en el paso siguiente). Devuelve la
+// forma estructurada del mensaje; lo comparten el envío real (enviarMenuParadas)
+// y el simulador web, para que ambos muestren exactamente el mismo menú.
+export async function construirMenuParadas(
   tecnicoId: string,
   fecha: string,
   encabezado?: string
-): Promise<void> {
+): Promise<MensajeSalida> {
   const visitas = await visitasPendientesDe(tecnicoId, fecha);
 
   if (visitas.length === 0) {
-    await sendText(
-      telefono,
-      "No te quedan visitas pendientes por hoy. ¡Buen trabajo! 👏"
-    );
-    return;
+    return {
+      tipo: "texto",
+      texto: "No te quedan visitas pendientes por hoy. ¡Buen trabajo! 👏",
+    };
   }
 
   const paradas = new Map<string, VisitaConRelaciones[]>();
@@ -64,9 +65,32 @@ export async function enviarMenuParadas(
     (encabezado ?? `Estas son tus paradas pendientes (${paradas.size}):`) +
     "\n\nElegí por cuál seguir — el orden lo manejás vos.";
 
-  await sendList(telefono, {
-    body,
+  return {
+    tipo: "lista",
+    texto: body,
     buttonText: "Ver paradas",
     sections: [{ title: "Paradas de hoy", rows: filas }],
-  });
+  };
+}
+
+// Envío real del menú por la Cloud API. Delega la construcción en
+// construirMenuParadas y sólo se ocupa del transporte (texto vs lista).
+export async function enviarMenuParadas(
+  telefono: string,
+  tecnicoId: string,
+  fecha: string,
+  encabezado?: string
+): Promise<void> {
+  const menu = await construirMenuParadas(tecnicoId, fecha, encabezado);
+
+  if (menu.tipo === "lista") {
+    await sendList(telefono, {
+      body: menu.texto,
+      buttonText: menu.buttonText,
+      sections: menu.sections,
+    });
+    return;
+  }
+
+  await sendText(telefono, menu.texto);
 }

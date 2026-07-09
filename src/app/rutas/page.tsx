@@ -124,13 +124,22 @@ export default async function RutasPage({
                   {g.visitas.length !== 1 && "s"}
                 </span>
               </div>
-              <form action={enviarRuta} className="relative z-10">
-                <input type="hidden" name="tecnico_id" value={g.tecnico.id} />
-                <input type="hidden" name="fecha" value={g.fecha} />
-                <SubmitButton variant="success" pendingText="Enviando…">
-                  Enviar ruta por WhatsApp
-                </SubmitButton>
-              </form>
+              <div className="relative z-10 flex items-center gap-3">
+                <Link
+                  href={`/simulador/${g.tecnico.id}`}
+                  target="_blank"
+                  className="text-sm font-medium text-ink-muted hover:text-ink hover:underline"
+                >
+                  Abrir simulador ↗
+                </Link>
+                <form action={enviarRuta}>
+                  <input type="hidden" name="tecnico_id" value={g.tecnico.id} />
+                  <input type="hidden" name="fecha" value={g.fecha} />
+                  <SubmitButton variant="success" pendingText="Enviando…">
+                    Enviar ruta por WhatsApp
+                  </SubmitButton>
+                </form>
+              </div>
             </header>
             <ul>
               {g.visitas.map((v) => (
