@@ -39,7 +39,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-canvas text-ink">
         <div className="flex min-h-screen">
-          <aside className="flex w-60 shrink-0 flex-col bg-ranko-ink px-5 py-7 text-white">
+          <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col overflow-y-auto bg-ranko-ink px-5 py-7 text-white">
             <div className="mb-6 flex flex-col gap-2">
               <div className="inline-flex self-start rounded-md bg-white px-3 py-2">
                 <Image
