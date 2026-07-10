@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SearchInput } from "@/components/ui/SearchInput";
 
-// Filtros de la pantalla Reportes: buscador (decorativo, todavía sin cablear —
-// ver SearchInput) + filtro de día que se aplica solo al cambiar el input
-// (onChange → router.push), sin botón de submit. Va debajo del título.
-export function ReportesFiltros({
+// Filtros de la pantalla Trabajos cerrados: buscador (decorativo, todavía sin
+// cablear — ver SearchInput) + filtro de día que se aplica solo al cambiar el
+// input (onChange → router.push), sin botón de submit. Va debajo del título.
+export function TrabajosCerradosFiltros({
   fecha,
   searchPlaceholder,
 }: {

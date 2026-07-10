@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const PRINCIPAL = [
   { href: "/", label: "Inicio" },
   { href: "/reportes", label: "Reportes" },
+  { href: "/trabajos-cerrados", label: "Trabajos cerrados" },
   { href: "/rutas", label: "Rutas" },
   { href: "/catalogo", label: "Trabajos" },
   { href: "/direcciones", label: "Direcciones" },
