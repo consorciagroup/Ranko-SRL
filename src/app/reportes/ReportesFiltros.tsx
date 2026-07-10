@@ -2,68 +2,41 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
 import { SearchInput } from "@/components/ui/SearchInput";
+import { ESTADO_REPORTE_LABEL } from "@/lib/types";
+import type { EstadoReporte } from "@/lib/types";
 
-// Arma el querystring de la pantalla preservando fecha + búsqueda; devuelve "?"
-// cuando no hay ninguno para volver al listado completo.
-function construirHref(fecha?: string, q?: string) {
-  const params = new URLSearchParams();
-  if (fecha) params.set("fecha", fecha);
-  if (q) params.set("q", q);
-  const qs = params.toString();
-  return qs ? `?${qs}` : "?";
-}
-
-// Filtros de la sección "Trabajos cerrados": buscador (por cliente / técnico /
-// tipo de trabajo / dirección) con debounce que empuja `?q=` a la URL, + filtro
-// de día. Ambos preservan el otro parámetro al cambiar.
+// Filtros de la pantalla Reportes: buscador (decorativo, todavía sin cablear —
+// ver SearchInput) + filtro de día (contra el período del reporte) + filtro de
+// estado (borrador/finalizado — hoy todos los reportes se crean en borrador,
+// pero el filtro ya queda armado para cuando exista el flujo de finalizar).
+// Cada input dispara su propio router.push, preservando el otro filtro activo.
 export function ReportesFiltros({
   fecha,
-  q,
+  estado,
   searchPlaceholder,
 }: {
   fecha?: string;
-  q?: string;
+  estado?: EstadoReporte;
   searchPlaceholder?: string;
 }) {
   const router = useRouter();
-  const [busqueda, setBusqueda] = useState(q ?? "");
 
-  // `fecha` vive en un ref para que el debounce use siempre el valor actual sin
-  // sumarlo a sus deps (así no se re-dispara al cambiar el día, que ya lo navega
-  // el date input). Se sincroniza en un effect: asignar el ref durante el render
-  // rompe la regla react-hooks/refs.
-  const fechaRef = useRef(fecha);
-  useEffect(() => {
-    fechaRef.current = fecha;
-  }, [fecha]);
-  const primeraCarga = useRef(true);
+  function actualizar(next: { fecha?: string; estado?: string }) {
+    const params = new URLSearchParams();
+    const f = next.fecha !== undefined ? next.fecha : fecha;
+    const e = next.estado !== undefined ? next.estado : estado;
+    if (f) params.set("fecha", f);
+    if (e) params.set("estado", e);
+    const qs = params.toString();
+    router.push(qs ? `?${qs}` : "?");
+  }
 
-  // Debounce: esperamos 250ms desde la última tecla antes de navegar, así no
-  // pegamos una navegación por cada carácter. Usamos `replace` (no `push`) para
-  // no llenar el historial con una entrada por letra, y `scroll: false` para
-  // que la página no salte al tope al re-renderizar el listado.
-  useEffect(() => {
-    if (primeraCarga.current) {
-      primeraCarga.current = false;
-      return;
-    }
-    const t = setTimeout(() => {
-      router.replace(construirHref(fechaRef.current, busqueda.trim() || undefined), {
-        scroll: false,
-      });
-    }, 250);
-    return () => clearTimeout(t);
-  }, [busqueda, router]);
+  const hayFiltros = Boolean(fecha || estado);
 
   return (
     <div className="flex flex-wrap items-end gap-3">
-      <SearchInput
-        placeholder={searchPlaceholder}
-        defaultValue={q}
-        onChange={setBusqueda}
-      />
+      <SearchInput placeholder={searchPlaceholder} />
       <label htmlFor="fecha" className="flex flex-col gap-1 text-sm">
         <input
           id="fecha"
@@ -71,22 +44,31 @@ export function ReportesFiltros({
           name="fecha"
           key={fecha ?? "todas"}
           defaultValue={fecha}
-          onChange={(e) => {
-            const value = e.target.value;
-            router.push(construirHref(value || undefined, busqueda.trim() || undefined), {
-              scroll: false,
-            });
-          }}
+          onChange={(e) => actualizar({ fecha: e.target.value })}
           className="rounded-md border border-hairline bg-surface px-3 py-2 shadow-sm"
         />
       </label>
-      {fecha && (
+      <label htmlFor="estado" className="flex flex-col gap-1 text-sm">
+        <select
+          id="estado"
+          name="estado"
+          key={estado ?? "todos"}
+          defaultValue={estado ?? ""}
+          onChange={(e) => actualizar({ estado: e.target.value })}
+          className="rounded-md border border-hairline bg-surface px-3 py-2 shadow-sm"
+        >
+          <option value="">Todos los estados</option>
+          <option value="borrador">{ESTADO_REPORTE_LABEL.borrador}</option>
+          <option value="finalizado">{ESTADO_REPORTE_LABEL.finalizado}</option>
+        </select>
+      </label>
+      {hayFiltros && (
         <Link
-          href={construirHref(undefined, q)}
+          href="?"
           scroll={false}
           className="pb-2 text-sm text-ink-muted hover:underline"
         >
-          Ver todas
+          Ver todos
         </Link>
       )}
     </div>

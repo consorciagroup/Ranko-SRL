@@ -39,28 +39,27 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-canvas text-ink">
         <div className="flex min-h-screen">
-          <aside className="flex w-60 shrink-0 flex-col bg-ranko-ink px-5 py-7 text-white">
-            <div className="mb-6 flex flex-col gap-2">
-              <div className="inline-flex self-start rounded-md bg-white px-3 py-2">
-                <Image
-                  src="/logo-ranko.png"
-                  alt="Ranko SRL — Ingeniería contra incendios"
-                  width={220}
-                  height={57}
-                  priority
-                />
-              </div>
+          <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col overflow-y-auto bg-ranko-ink px-3 py-7 text-white">
+            <div className="mb-8 flex justify-center">
+              <Image
+                src="/logo-ranko-oscuro.png"
+                alt="Ranko SRL — Ingeniería contra incendios"
+                width={220}
+                height={57}
+                priority
+                className="h-auto w-[218px]"
+              />
             </div>
 
             <SidebarNav />
 
-            <div className="mt-auto flex items-center gap-2.5 rounded-md bg-surface p-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ranko text-xs font-semibold text-white">
+            <div className="mt-auto -mx-3 flex items-center gap-3 border-t border-white/10 px-4 pt-5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ranko text-sm font-semibold text-white">
                 RS
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-sm font-semibold text-ink-2">Ranko SRL</span>
-                <span className="text-xs text-ink-muted">Panel interno</span>
+                <span className="font-display text-base font-semibold text-white">Ranko SRL</span>
+                <span className="text-sm text-white/60">Panel interno</span>
               </div>
             </div>
           </aside>
