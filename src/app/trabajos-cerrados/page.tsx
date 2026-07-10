@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { formatFecha, formatHora } from "@/lib/format";
+import { normalizarBusqueda } from "@/lib/busqueda";
 import type { Direccion, TipoTrabajo, Tecnico, Visita } from "@/lib/types";
 import { EstadoBadge } from "@/components/EstadoBadge";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -42,8 +43,8 @@ export default async function TrabajosCerradosPage({
 
   // Búsqueda por texto (cliente / técnico / tipo de trabajo / dirección). El
   // listado ya viene acotado por fecha desde la DB, así que el filtro por `q`
-  // se resuelve en memoria sobre esas filas.
-  const termino = (q ?? "").trim().toLowerCase();
+  // se resuelve en memoria sobre esas filas. Insensible a acentos y mayúsculas.
+  const termino = normalizarBusqueda((q ?? "").trim());
   const trabajosFiltrados = termino
     ? trabajos.filter((t) =>
         [
@@ -51,7 +52,7 @@ export default async function TrabajosCerradosPage({
           t.direcciones.direccion,
           t.tecnicos.nombre,
           t.tipos_trabajo.nombre,
-        ].some((campo) => campo?.toLowerCase().includes(termino))
+        ].some((campo) => campo && normalizarBusqueda(campo).includes(termino))
       )
     : trabajos;
 
