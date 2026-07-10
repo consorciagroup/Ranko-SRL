@@ -25,9 +25,9 @@ type ReporteVisita = Visita & {
 export default async function ReportesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ fecha?: string; visita?: string }>;
+  searchParams: Promise<{ fecha?: string; visita?: string; q?: string }>;
 }) {
-  const { fecha: fechaFiltro, visita: visitaId } = await searchParams;
+  const { fecha: fechaFiltro, visita: visitaId, q } = await searchParams;
 
   const db = supabaseAdmin();
 
@@ -50,12 +50,35 @@ export default async function ReportesPage({
   if (error) throw new Error(error.message);
   const reportes = (data ?? []) as ReporteVisita[];
 
+  // Búsqueda por texto de "Trabajos cerrados" (cliente / técnico / tipo de
+  // trabajo / dirección). El listado ya viene acotado por fecha desde la DB,
+  // así que el filtro por `q` se resuelve en memoria sobre esas filas.
+  const termino = (q ?? "").trim().toLowerCase();
+  const reportesFiltrados = termino
+    ? reportes.filter((r) =>
+        [
+          r.direcciones.cliente,
+          r.direcciones.direccion,
+          r.tecnicos.nombre,
+          r.tipos_trabajo.nombre,
+        ].some((campo) => campo?.toLowerCase().includes(termino))
+      )
+    : reportes;
+
   const seleccionado = visitaId
     ? reportes.find((r) => r.id === visitaId)
     : undefined;
 
-  const hrefReporte = (id: string) =>
-    `?${fechaFiltro ? `fecha=${fechaFiltro}&` : ""}visita=${id}`;
+  // Preserva fecha + búsqueda activas al navegar dentro de la pantalla.
+  const hrefCon = (extra: Record<string, string>) => {
+    const params = new URLSearchParams();
+    if (fechaFiltro) params.set("fecha", fechaFiltro);
+    if (q) params.set("q", q);
+    for (const [k, v] of Object.entries(extra)) params.set(k, v);
+    const qs = params.toString();
+    return qs ? `?${qs}` : "?";
+  };
+  const hrefReporte = (id: string) => hrefCon({ visita: id });
 
   return (
     <div className="max-w-7xl">
@@ -111,6 +134,7 @@ export default async function ReportesPage({
         </h2>
         <ReportesFiltros
           fecha={fechaFiltro}
+          q={q}
           searchPlaceholder="Buscar trabajo, cliente o técnico…"
         />
       </div>
@@ -118,7 +142,7 @@ export default async function ReportesPage({
       <div className="mt-6 flex items-start gap-6">
         <div className="min-w-0 flex-1">
           <div className="grid gap-4">
-            {reportes.map((r) => (
+            {reportesFiltrados.map((r) => (
               <article
                 key={r.id}
                 className="relative flex items-center justify-between rounded-xl bg-surface px-5 py-4 hairline"
@@ -144,11 +168,13 @@ export default async function ReportesPage({
                 </div>
               </article>
             ))}
-            {reportes.length === 0 && (
+            {reportesFiltrados.length === 0 && (
               <EmptyState>
-                {fechaFiltro
-                  ? `Sin reportes cerrados para el ${formatFecha(fechaFiltro)}.`
-                  : "Sin reportes cerrados todavía. Los reportes se generan cuando un técnico completa una visita desde WhatsApp."}
+                {termino
+                  ? `Sin trabajos que coincidan con “${q}”.`
+                  : fechaFiltro
+                    ? `Sin reportes cerrados para el ${formatFecha(fechaFiltro)}.`
+                    : "Sin reportes cerrados todavía. Los reportes se generan cuando un técnico completa una visita desde WhatsApp."}
               </EmptyState>
             )}
           </div>
@@ -156,7 +182,7 @@ export default async function ReportesPage({
 
         <DetailPanel
           title={seleccionado ? seleccionado.direcciones.cliente : undefined}
-          closeHref={fechaFiltro ? `?fecha=${fechaFiltro}` : "?"}
+          closeHref={hrefCon({})}
           emptyMessage="Seleccioná un reporte para ver el detalle."
         >
           {seleccionado ? (

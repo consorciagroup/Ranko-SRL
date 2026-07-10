@@ -1,12 +1,15 @@
-// ⚠️ TODO(cablear): buscador VISUAL del panel. Hoy NO filtra nada — es un
-// control decorativo para igualar el diseño. Falta cablear la búsqueda real
-// (por reporte / cliente / técnico) donde se use: Inicio, Rutas, Técnicos,
-// Direcciones y Catálogo. Cuando se cablee, convertir en client component con
-// estado + debounce y filtrar el listado correspondiente.
+// Buscador del panel. Es funcional cuando se le pasa `onChange` (el padre — un
+// client component — maneja el estado y filtra el listado; ver ReportesFiltros).
+// Sin `onChange` queda decorativo, que es como sigue hoy en Inicio, Rutas,
+// Técnicos, Direcciones y Catálogo hasta que se cablee cada uno.
 export function SearchInput({
   placeholder = "Buscar…",
+  defaultValue,
+  onChange,
 }: {
   placeholder?: string;
+  defaultValue?: string;
+  onChange?: (value: string) => void;
 }) {
   return (
     <div className="flex h-9 w-64 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3 shadow-sm transition-colors focus-within:border-neutral-400">
@@ -29,6 +32,8 @@ export function SearchInput({
         placeholder={placeholder}
         aria-label={placeholder}
         autoFocus
+        defaultValue={defaultValue}
+        onChange={onChange ? (e) => onChange(e.target.value) : undefined}
         className="w-full bg-transparent text-sm text-neutral-800 placeholder:text-neutral-400"
         style={{ outline: "none" }}
       />
