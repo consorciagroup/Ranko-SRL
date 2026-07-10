@@ -34,23 +34,21 @@ const IconCerrados = (p: IconProps) =>
   baseIcon(p, <><path d="M4 7h16v13H4z" /><path d="M4 7 6 3h12l2 4" /><path d="m9.5 13.5 2 2 3.5-3.5" /></>);
 const IconRutas = (p: IconProps) =>
   baseIcon(p, <><path d="M9 20 3 17V4l6 3 6-3 6 3v13l-6 3-6-3z" /><path d="M9 7v13M15 4v13" /></>);
-// Matafuego de contorno (diseño propio, para combinar con los demás íconos de
-// trazo): cuerpo cilíndrico, cuello, manija arriba y manguera curvando a la
-// derecha con boquilla.
-// Matafuego: el pictograma del sitio de Ranko (Font Awesome `fire-extinguisher`,
-// solid), con la cornetita/manguera apuntando arriba-izquierda. Glifo relleno,
-// por eso usa `fill` y su propio viewBox en vez de baseIcon (que es de trazo).
-const IconTrabajos = (p: IconProps) => (
-  <svg
-    viewBox="0 0 448 512"
-    fill="currentColor"
-    aria-hidden="true"
-    className="h-[1.25em] w-[1.25em] shrink-0"
-    {...p}
-  >
-    <path d="M434.027 26.329l-168 28C254.693 56.218 256 67.8 256 72h-58.332C208.353 36.108 181.446 0 144 0c-39.435 0-66.368 39.676-52.228 76.203-52.039 13.051-75.381 54.213-90.049 90.884-4.923 12.307 1.063 26.274 13.37 31.197 12.317 4.926 26.279-1.075 31.196-13.37C75.058 112.99 106.964 120 168 120v27.076c-41.543 10.862-72 49.235-72 94.129V488c0 13.255 10.745 24 24 24h144c13.255 0 24-10.745 24-24V240c0-44.731-30.596-82.312-72-92.97V120h40c0 2.974-1.703 15.716 10.027 17.671l168 28C441.342 166.89 448 161.25 448 153.834V38.166c0-7.416-6.658-13.056-13.973-11.837zM144 72c-8.822 0-16-7.178-16-16s7.178-16 16-16 16 7.178 16 16-7.178 16-16 16z" />
-  </svg>
-);
+// Matafuego de contorno (basado en el ícono que eligió Facundo en Flaticon):
+// cuerpo con etiqueta cuadrada, manómetro arriba, manija a la derecha y manguera
+// que baja a la izquierda hasta la boquilla. Trazo, para combinar con los demás.
+const IconTrabajos = (p: IconProps) =>
+  baseIcon(
+    p,
+    <g transform="translate(12 11.5) scale(1.2) translate(-12 -11.5)">
+      <path d="M10 10.5a3.5 3.5 0 0 1 7 0v9a1.4 1.4 0 0 1-1.4 1.4h-4.2a1.4 1.4 0 0 1-1.4-1.4z" />
+      <rect x="11.4" y="12.6" width="4.2" height="4.6" rx="0.3" />
+      <circle cx="13.5" cy="5.7" r="1.3" />
+      <path d="M14.7 5.2 19.6 4.6v1.5l-4.6 1" />
+      <path d="M12.4 6.3C8.4 6.7 6.5 9.2 6.5 13v4.2" />
+      <rect x="5.1" y="17.2" width="2.8" height="4.4" rx="1" />
+    </g>,
+  );
 const IconDirecciones = (p: IconProps) =>
   baseIcon(p, <><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></>);
 const IconTecnicos = (p: IconProps) =>
