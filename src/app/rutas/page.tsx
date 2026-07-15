@@ -91,7 +91,7 @@ export default async function RutasPage({
       <div className="min-w-0 flex-1">
       {/* Rutas por técnico y fecha, todas juntas en un mismo listado */}
       {grupos.length > 0 ? (
-        <div className="grid max-h-[490px] grid-cols-[max-content_max-content_1fr] overflow-y-auto rounded-xl bg-surface hairline">
+        <div className="sticky top-8 grid max-h-[calc(100vh-13.5rem)] grid-cols-[max-content_max-content_1fr] overflow-y-auto rounded-xl bg-surface hairline">
           {grupos.map((g) => (
             <div
               key={`${g.tecnico.id}-${g.fecha}`}
@@ -146,6 +146,7 @@ export default async function RutasPage({
         }
         closeHref={fechaFiltro ? `?fecha=${fechaFiltro}` : "?"}
         emptyMessage="Seleccioná un técnico para ver el orden de sus paradas."
+        maxHeightClassName="max-h-[calc(100vh-13.5rem)]"
         actions={
           tecnicoSeleccionado && rutaFecha ? (
             <EditarRutaModal

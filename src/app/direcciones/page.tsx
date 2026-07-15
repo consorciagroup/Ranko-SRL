@@ -97,7 +97,7 @@ export default async function DireccionesPage({
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <div className="max-h-[490px] overflow-y-auto rounded-lg border border-neutral-200 bg-white">
+      <div className="sticky top-8 max-h-[calc(100vh-9.5rem)] overflow-y-auto rounded-lg border border-neutral-200 bg-white">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-neutral-200 text-left text-neutral-500">
@@ -151,6 +151,7 @@ export default async function DireccionesPage({
         title={direccionSeleccionada?.direccion}
         closeHref="?"
         emptyMessage="Seleccioná una dirección para ver su detalle."
+        maxHeightClassName="max-h-[calc(100vh-9.5rem)]"
       >
         {direccionSeleccionada ? (
           <div className="space-y-4">

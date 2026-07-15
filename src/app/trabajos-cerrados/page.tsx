@@ -85,7 +85,7 @@ export default async function TrabajosCerradosPage({
       <div className="mt-6 flex items-start gap-6">
         <div className="min-w-0 flex-1">
           {trabajosFiltrados.length > 0 ? (
-            <div className="max-h-[520px] overflow-y-auto rounded-xl bg-surface hairline">
+            <div className="sticky top-8 max-h-[calc(100vh-13.5rem)] overflow-y-auto rounded-xl bg-surface hairline">
               {trabajosFiltrados.map((t) => (
                 <div
                   key={t.id}
@@ -128,6 +128,7 @@ export default async function TrabajosCerradosPage({
           title={seleccionado ? seleccionado.direcciones.cliente : undefined}
           closeHref={hrefCon({})}
           emptyMessage="Seleccioná un trabajo para ver el detalle."
+          maxHeightClassName="max-h-[calc(100vh-13.5rem)]"
         >
           {seleccionado ? (
             <dl className="space-y-3 text-sm">

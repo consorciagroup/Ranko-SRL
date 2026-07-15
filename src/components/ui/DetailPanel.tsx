@@ -10,15 +10,20 @@ export function DetailPanel({
   emptyMessage,
   actions,
   children,
+  // El alto disponible depende de cuánto ocupa el header/filtros de cada
+  // página arriba del panel — cada página pasa el valor que le corresponde
+  // (ver el mismo cálculo aplicado al contenedor de la lista, al lado).
+  maxHeightClassName = "max-h-[calc(100vh-4rem)]",
 }: {
   title?: string;
   closeHref?: string;
   emptyMessage: string;
   actions?: React.ReactNode;
   children?: React.ReactNode;
+  maxHeightClassName?: string;
 }) {
   return (
-    <aside className="sticky top-8 flex max-h-[calc(100vh-4rem)] w-96 shrink-0 flex-col self-start overflow-hidden rounded-xl bg-surface hairline">
+    <aside className={`sticky top-8 flex ${maxHeightClassName} w-96 shrink-0 flex-col self-start overflow-hidden rounded-xl bg-surface hairline`}>
       {children ? (
         <>
           <header className="flex items-center justify-between gap-2 px-4 py-3 shadow-[inset_0_-1px_0_var(--color-hairline)]">
