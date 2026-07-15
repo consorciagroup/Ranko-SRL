@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { TechCard } from "@/components/ui/TechCard";
 import type { Tecnico } from "@/lib/types";
 import { calcularStatsTecnicos, type VisitaStat } from "./stats";
-import { crearTecnico, eliminarTecnico } from "./actions";
+import { crearTecnico, editarTecnico, eliminarTecnico } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +23,7 @@ export default async function TecnicosPage() {
     // cada técnico es su "último trabajo", y contamos las del mes en curso.
     db
       .from("visitas")
-      .select("tecnico_id, fecha, direcciones(cliente)")
+      .select("tecnico_id, fecha, direcciones(cliente), tipos_trabajo(nombre)")
       .order("fecha", { ascending: false }),
   ]);
   if (error) throw new Error(error.message);
@@ -88,7 +88,14 @@ export default async function TecnicosPage() {
                     ? `${s.ultimo.cliente} · ${fechaRelativa(s.ultimo.fecha, hoy)}`
                     : null
                 }
+                trabajosRecientes={
+                  s?.recientes.map((r) => ({
+                    ...r,
+                    fecha: fechaRelativa(r.fecha, hoy),
+                  })) ?? []
+                }
                 eliminar={eliminarTecnico}
+                editar={editarTecnico}
               />
             );
           })}
