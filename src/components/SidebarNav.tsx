@@ -74,7 +74,7 @@ const PRINCIPAL = [
   { href: "/configuracion", label: "Configuración", Icon: IconConfiguracion },
 ];
 
-function esActivo(pathname: string, href: string) {
+export function esActivo(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
