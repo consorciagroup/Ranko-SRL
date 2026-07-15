@@ -97,14 +97,14 @@ export default async function DireccionesPage({
 
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
-      <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+      <div className="max-h-[490px] overflow-y-auto rounded-lg border border-neutral-200 bg-white">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-neutral-200 text-left text-neutral-500">
-            <th className="px-4 py-3 font-medium">Dirección</th>
-            <th className="px-4 py-3 font-medium">Cliente</th>
-            <th className="px-4 py-3 font-medium">Notas</th>
-            <th className="w-24 px-4 py-3" />
+            <th className="sticky top-0 z-10 bg-white px-4 py-3 font-medium">Dirección</th>
+            <th className="sticky top-0 z-10 bg-white px-4 py-3 font-medium">Cliente</th>
+            <th className="sticky top-0 z-10 bg-white px-4 py-3 font-medium">Notas</th>
+            <th className="sticky top-0 z-10 w-24 bg-white px-4 py-3" />
           </tr>
         </thead>
         <tbody>

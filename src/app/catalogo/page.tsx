@@ -70,7 +70,7 @@ export default async function CatalogoPage({
       <div className="mt-6 flex items-start gap-6">
       <div className="min-w-0 flex-1">
       {tipos.length > 0 ? (
-        <div className="rounded-lg border border-neutral-200 bg-white">
+        <div className="max-h-[440px] overflow-y-auto rounded-lg border border-neutral-200 bg-white">
           {tipos.map((t) => (
             <div
               key={t.id}

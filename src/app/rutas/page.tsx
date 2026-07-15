@@ -91,7 +91,7 @@ export default async function RutasPage({
       <div className="min-w-0 flex-1">
       {/* Rutas por técnico y fecha, todas juntas en un mismo listado */}
       {grupos.length > 0 ? (
-        <div className="grid grid-cols-[max-content_max-content_1fr] overflow-hidden rounded-xl bg-surface hairline">
+        <div className="grid max-h-[490px] grid-cols-[max-content_max-content_1fr] overflow-y-auto rounded-xl bg-surface hairline">
           {grupos.map((g) => (
             <div
               key={`${g.tecnico.id}-${g.fecha}`}
@@ -110,7 +110,7 @@ export default async function RutasPage({
               <div className="whitespace-nowrap pl-2 text-sm text-ink-muted">
                 {formatFecha(g.fecha)}
               </div>
-              <div className="relative z-10 flex items-center justify-end gap-3">
+              <div className="relative z-10 flex items-center justify-end gap-3 whitespace-nowrap">
                 <Link
                   href={`/simulador/${g.tecnico.id}`}
                   target="_blank"

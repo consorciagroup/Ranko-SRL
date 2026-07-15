@@ -18,7 +18,7 @@ export function DetailPanel({
   children?: React.ReactNode;
 }) {
   return (
-    <aside className="w-96 shrink-0 self-start rounded-xl bg-surface hairline">
+    <aside className="sticky top-8 flex max-h-[calc(100vh-4rem)] w-96 shrink-0 flex-col self-start overflow-hidden rounded-xl bg-surface hairline">
       {children ? (
         <>
           <header className="flex items-center justify-between gap-2 px-4 py-3 shadow-[inset_0_-1px_0_var(--color-hairline)]">
@@ -52,7 +52,7 @@ export function DetailPanel({
               )}
             </div>
           </header>
-          <div className="p-4">{children}</div>
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">{children}</div>
         </>
       ) : (
         <EmptyState>{emptyMessage}</EmptyState>

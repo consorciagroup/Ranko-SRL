@@ -85,7 +85,7 @@ export default async function TrabajosCerradosPage({
       <div className="mt-6 flex items-start gap-6">
         <div className="min-w-0 flex-1">
           {trabajosFiltrados.length > 0 ? (
-            <div className="overflow-hidden rounded-xl bg-surface hairline">
+            <div className="max-h-[520px] overflow-y-auto rounded-xl bg-surface hairline">
               {trabajosFiltrados.map((t) => (
                 <div
                   key={t.id}
