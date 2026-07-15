@@ -53,6 +53,14 @@ const IconDirecciones = (p: IconProps) =>
   baseIcon(p, <><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z" /><circle cx="12" cy="10" r="2.5" /></>);
 const IconTecnicos = (p: IconProps) =>
   baseIcon(p, <><circle cx="9" cy="8" r="3" /><path d="M3.5 20a5.5 5.5 0 0 1 11 0" /><path d="M16 6a3 3 0 0 1 0 6M17.5 20a5.5 5.5 0 0 0-3-4.9" /></>);
+const IconConfiguracion = (p: IconProps) =>
+  baseIcon(
+    p,
+    <>
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="M12 3.5v2.6M12 17.9v2.6M20.5 12h-2.6M6.1 12H3.5M17.66 6.34l-1.84 1.84M8.18 15.82l-1.84 1.84M17.66 17.66l-1.84-1.84M8.18 8.18 6.34 6.34" />
+    </>,
+  );
 
 // Todo a un mismo nivel, siempre visible en el sidebar.
 const PRINCIPAL = [
@@ -63,6 +71,7 @@ const PRINCIPAL = [
   { href: "/catalogo", label: "Trabajos", Icon: IconTrabajos },
   { href: "/direcciones", label: "Direcciones", Icon: IconDirecciones },
   { href: "/tecnicos", label: "Técnicos", Icon: IconTecnicos },
+  { href: "/configuracion", label: "Configuración", Icon: IconConfiguracion },
 ];
 
 function esActivo(pathname: string, href: string) {
