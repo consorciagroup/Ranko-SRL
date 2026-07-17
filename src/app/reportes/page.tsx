@@ -6,6 +6,7 @@ import { ESTADO_REPORTE_LABEL } from "@/lib/types";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { contenidoAHtml, stripHtml } from "@/lib/richtext";
 import { ReportesFiltros } from "./ReportesFiltros";
 
 export const dynamic = "force-dynamic";
@@ -70,7 +71,7 @@ export default async function ReportesPage({
                 >
                   <div className="min-w-0">
                     <div className="font-display font-bold text-ink">
-                      {r.titulo}
+                      {stripHtml(contenidoAHtml(r.titulo))}
                       <span className="ml-2 font-normal text-ink-muted">
                         {r.direcciones.direccion}
                       </span>

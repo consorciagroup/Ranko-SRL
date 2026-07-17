@@ -93,3 +93,88 @@ textarea:focus-visible {
   outline-offset: 1px;
   border-color: var(--color-ranko);
 }
+
+/* ==========================================================================
+   Contenido narrativo rico de los reportes (HTML de Tiptap).
+   Estilos a mano — no está instalado @tailwindcss/typography. Aplica tanto a
+   la vista final (dangerouslySetInnerHTML) como a los .ProseMirror del editor.
+   ========================================================================== */
+.reporte-rico h1,
+.reporte-rico h2,
+.reporte-rico h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin-top: 1em;
+}
+.reporte-rico h1 {
+  font-size: 1.5em;
+}
+.reporte-rico h2 {
+  font-size: 1.25em;
+}
+.reporte-rico h3 {
+  font-size: 1.1em;
+}
+.reporte-rico p {
+  margin-top: 0.5em;
+}
+.reporte-rico ul,
+.reporte-rico ol {
+  margin: 0.5em 0 0.5em 1.25em;
+}
+.reporte-rico ul {
+  list-style: disc;
+}
+.reporte-rico ol {
+  list-style: decimal;
+}
+.reporte-rico blockquote {
+  border-left: 3px solid var(--color-ranko);
+  padding-left: 1em;
+  color: var(--color-ink-muted);
+  font-style: italic;
+}
+.reporte-rico a {
+  color: var(--color-ranko);
+  text-decoration: underline;
+}
+/* El contenteditable de Tiptap no debe mostrar el outline de foco del sistema:
+   ya se resalta el editor activo desde el contenedor. */
+.reporte-rico .ProseMirror:focus {
+  outline: none;
+}
+/* Placeholder de un editor vacío (evita que se vea como un hueco sin pista). */
+.reporte-rico .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--color-ink-muted);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Exportación a PDF vía impresión del navegador.
+   ========================================================================== */
+@media print {
+  aside,
+  .no-print {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  article {
+    box-shadow: none !important;
+  }
+  .trabajo-card {
+    break-inside: avoid;
+  }
+  img {
+    max-width: 100%;
+  }
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+}
